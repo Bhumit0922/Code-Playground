@@ -6,6 +6,7 @@
   --white: #ffffff;
   --bg: #f8f9fd;
   --border: #f4f4f6;
+  --error: #ff4d4f; /* Added error color */
 }
 
 * {
@@ -25,6 +26,7 @@ body {
   background: var(--bg);
 }
 
+/* Social Media Buttons */
 .Socials {
   display: flex;
   gap: 1rem;
@@ -37,7 +39,7 @@ body {
 }
 
 .Socials > a {
-  padding: 0.5rem;
+  padding: 0.75rem;
   border-radius: 0.5rem;
   width: 100%;
   min-height: 3rem;
@@ -48,7 +50,6 @@ body {
   text-decoration: none;
   font-size: 1.1rem;
   color: var(--secondary);
-  padding: 0.5rem;
   border: 1px solid var(--border);
   background: var(--white);
   transition: all 0.3s ease;
@@ -56,9 +57,11 @@ body {
 }
 
 .Socials > a:hover {
-  border: 1px solid var(--primary);
+  border-color: var(--primary);
+  transform: scale(1.05);
 }
 
+/* Logo & Welcome Message */
 .CP_logo {
   margin-bottom: 1rem;
   display: flex;
@@ -67,21 +70,18 @@ body {
   text-align: center;
 }
 
-/* welcome massage */
-
 .logo {
   height: 4rem;
   margin: 0 auto;
 }
 
+/* Divider Lines */
 .lines {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin: 1rem 0;
   display: flex;
   gap: 1rem;
   font-weight: bold;
   align-items: center;
-  /* justify-content: center; */
 }
 
 .line {
@@ -90,6 +90,7 @@ body {
   background: var(--border);
 }
 
+/* Input Fields */
 .text-field {
   display: flex;
   flex-direction: column;
@@ -98,15 +99,13 @@ body {
 
 .text-field input {
   color: var(--secondary);
-  max-width: 100%;
   width: 100%;
   border: 1px solid var(--border);
   min-height: 3rem;
   letter-spacing: 0.03rem;
   outline: none;
-  /* background: var(--input-bg); */
-  background: var(--wh);
-  transition: 0.25s;
+  background: var(--white);
+  transition: border-color 0.25s, box-shadow 0.25s;
   border-radius: 0.5rem;
   text-indent: 1.25rem;
 }
@@ -124,29 +123,24 @@ body {
 
 .error-message {
   display: none;
-}
-
-.text-field input:user-invalid ~ .error-message {
-  display: block;
-  /* margin: 0.25rem; */
   font-size: 0.8rem;
   color: var(--secondary);
   background: var(--white);
 }
 
-.text-field input:valid ~ .error-message {
-  display: none; /* Hides the error message when input is valid */
+.text-field input:user-invalid ~ .error-message {
+  display: block;
 }
 
 .text-field input:focus {
-  border: 1px solid var(--primary);
+  border-color: var(--primary);
   box-shadow: rgba(99, 99, 99, 0.2) 0px 1px 4px 0px;
 }
 
+/* Form Container */
 .CP_form {
   display: flex;
   flex-direction: column;
-  justify-content: start;
   position: relative;
   gap: 1rem;
   background-color: var(--white);
@@ -155,9 +149,9 @@ body {
   padding: 3rem 2rem;
   border-radius: 2rem;
   box-shadow: rgba(99, 99, 99, 0.05) 0px 2px 8px 0px;
-  height: fit-content;
 }
 
+/* Buttons */
 .CP_button {
   background: var(--primary);
   color: white;
@@ -167,24 +161,20 @@ body {
   justify-content: center;
   align-items: center;
   margin-top: 1rem;
-  line-height: 3.125rem;
-  outline: none;
   font-size: 1.125rem;
-  letter-spacing: 0.025rem;
-  text-decoration: none;
-  cursor: pointer;
   font-weight: 800;
   min-height: 3.125rem;
   width: 100%;
   border-radius: 0.5rem;
   transition: all 0.3s ease;
-  -webkit-transition: all 0.3s ease;
 }
 
 .CP_button:hover {
   background: var(--primary-dark);
+  transform: scale(1.03);
 }
 
+/* Form Actions */
 .CP_actions {
   display: flex;
   flex-direction: column;
@@ -200,14 +190,123 @@ body {
   color: var(--secondary);
   font-weight: 600;
   text-decoration: none;
+  transition: color 0.3s;
 }
 
 .CP_actions a:hover {
   text-decoration: underline;
+  color: var(--primary);
 }
 
+/* Row Layout */
 .CP_row {
   display: flex;
   gap: 0.5rem;
   justify-content: space-between;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: var(--primary);
+  color: var(--white);
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--white);
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: var(--primary-dark);
+}
+
+.hero {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--primary-dark);
+  color: var(--white);
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background: var(--white);
+  color: var(--primary);
+  font-weight: 700;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  background: var(--primary-dark);
+  color: var(--white);
+}
+
+.features {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 4rem 2rem;
+  background: var(--bg);
+}
+
+.feature-card {
+  background: var(--white);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  text-align: center;
+}
+
+.feature-card h3 {
+  margin-bottom: 1rem;
+  color: var(--primary-dark);
+}
+
+.testimonials {
+  background: var(--white);
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.testimonial-card {
+  background: var(--bg);
+  padding: 1.5rem;
+  margin: 1rem auto;
+  max-width: 400px;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 2px 8px;
+}
+
+.testimonial-card p {
+  font-style: italic;
+}
+
+.footer {
+  text-align: center;
+  padding: 1rem;
+  background: var(--secondary);
+  color: var(--white);
 }
