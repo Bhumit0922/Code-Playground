@@ -61,18 +61,21 @@ body {
   transform: scale(1.05);
 }
 
-/* Logo & Welcome Message */
+/* Logo Container */
 .CP_logo {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  align-items: center; /* Center align */
   text-align: center;
 }
 
+/* Logo Image */
 .logo {
-  height: 4rem;
-  margin: 0 auto;
+  height: 8rem; /* Increased from 6rem */
+  width: auto; /* Maintain aspect ratio */
+  max-width: 100%;
+  object-fit: contain;
 }
 
 /* Divider Lines */

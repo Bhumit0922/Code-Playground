@@ -12,9 +12,26 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background: #5b9bd5; /* Softer blue */
-  color: white;
+  padding: 0 2rem; /* Keeps spacing without increasing height */
+  background: #5b9bd5;
+  height: 4rem; /* Fixed navbar height */
+}
+
+/* Logo Wrapper */
+.logo {
+  display: flex;
+  align-items: center;
+  height: 100%; /* Ensures logo is within navbar height */
+}
+
+/* Logo Image */
+.logo a img {
+  height: 4rem; /* Fits within navbar height */
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  background: transparent; /* Ensures no extra background */
+  border-radius: 15%;
 }
 
 .nav-links {
@@ -53,7 +70,7 @@ body {
   margin: auto;
 }
 
-/* Call-to-action Button */
+/* Get Started Button */
 .btn {
   display: inline-block;
   padding: 1rem 2rem;
