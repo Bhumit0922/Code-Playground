@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head', { pageTitle: 'Manage Contests' }) %>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <%- include('../partials/navbar', { activePage: 'admin' }) %>
+
+    <main class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <div class="admin-title-group">
+                <h1><i class="fa-solid fa-trophy" style="color: #22d3ee;"></i> Contest Operations Center</h1>
+                <p>Manage contest schedules, extend live rounds, trigger rating calculations, and monitor participation.</p>
+            </div>
+            <div>
+                <a href="/create_contest" class="btn btn-primary" style="font-weight: 600;">
+                    <i class="fa-solid fa-plus"></i> Host New Contest
+                </a>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="admin-nav-tabs">
+            <a href="/admin" class="admin-tab"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+            <a href="/admin/problems" class="admin-tab"><i class="fa-solid fa-code"></i> Questions Bank</a>
+            <a href="/admin/add-problem" class="admin-tab"><i class="fa-solid fa-square-plus"></i> Add Question</a>
+            <a href="/admin/contests" class="admin-tab active"><i class="fa-solid fa-trophy"></i> Contests (<%= contests.length %>)</a>
+            <a href="/admin/users" class="admin-tab"><i class="fa-solid fa-users"></i> Users</a>
+        </nav>
+
+        <!-- Contests Table Card -->
+        <div class="admin-card" style="padding: 0; overflow: hidden;">
+            <div class="admin-table-wrapper" style="border: none;">
+                <table class="admin-table" id="contests-table">
+                    <thead>
+                        <tr>
+                            <th>Contest Name</th>
+                            <th>Code</th>
+                            <th>Status</th>
+                            <th>Timing</th>
+                            <th>Problems</th>
+                            <th>Participants</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (contests && contests.length > 0) { %>
+                            <% contests.forEach(c => { %>
+                                <tr data-id="<%= c._id %>">
+                                    <td>
+                                        <div style="font-weight: 600; font-size: 1rem;"><%= c.name %></div>
+                                        <div style="font-size: 0.8rem; color: var(--text-muted);"><%= c.visibility %> &bull; <%= c.difficulty %></div>
+                                    </td>
+                                    <td>
+                                        <code style="background: rgba(255,255,255,0.08); padding: 2px 8px; border-radius: 4px; font-weight: bold; color: #22d3ee;"><%= c.contestCode %></code>
+                                    </td>
+                                    <td>
+                                        <span class="badge <%= c.status === 'Ongoing' ? 'badge-hard' : (c.status === 'Upcoming' ? 'badge-easy' : 'badge-medium') %>">
+                                            <%= c.status %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div style="font-size: 0.85rem;">
+                                            <div><strong>Starts:</strong> <%= new Date(c.startTime).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) %></div>
+                                            <div><strong>Ends:</strong> <%= new Date(c.endTime).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) %></div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span style="font-weight: 600;"><%= (c.problems || []).length %></span>
+                                    </td>
+                                    <td>
+                                        <span style="font-weight: 600;"><%= (c.participants || []).length %></span>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                                            <a href="/contestpage/<%= c._id %>" class="btn-action" style="background: rgba(255,255,255,0.05); color: var(--text-main);" title="Go to Contest Room">
+                                                <i class="fa-solid fa-door-open"></i> Room
+                                            </a>
+                                            <a href="/contest/<%= c._id %>/leaderboard" class="btn-action" style="background: rgba(6, 182, 212, 0.15); color: #22d3ee;" title="Leaderboard">
+                                                <i class="fa-solid fa-ranking-star"></i> Standings
+                                            </a>
+                                            <% if (c.status === 'Ongoing') { %>
+                                                <button type="button" data-id="<%= c._id %>" onclick="handleExtendContest(this)" class="btn-action btn-action-edit" title="Extend duration">
+                                                    <i class="fa-solid fa-clock"></i> +Time
+                                                </button>
+                                                <button type="button" data-id="<%= c._id %>" data-name="<%= c.name %>" onclick="handleEndContestNow(this)" class="btn-action btn-action-success" title="Force end & calculate ratings">
+                                                    <i class="fa-solid fa-flag-checkered"></i> End Round
+                                                </button>
+                                            <% } %>
+                                            <button type="button" data-id="<%= c._id %>" data-name="<%= c.name %>" onclick="handleDeleteContest(this)" class="btn-action btn-action-danger" title="Delete Contest">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                                    <i class="fa-solid fa-trophy" style="font-size: 2.5rem; margin-bottom: 0.75rem; display: block;"></i>
+                                    No contests found. Click "Host New Contest" to schedule your first round.
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const role = localStorage.getItem('role');
+            if (role !== 'admin') {
+                alert('Access Restricted: You must be logged in as an Administrator.');
+                window.location.href = '/signin';
+            }
+        });
+
+        async function handleEndContestNow(btn) {
+            const id = btn.dataset.id;
+            const name = btn.dataset.name;
+            if (!confirm(`Are you sure you want to end "${name}" now? This will immediately lock submissions, finalize standings, and compute ELO ratings.`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/admin/contests/${id}/end`, {
+                    method: 'POST'
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    alert(data.message || 'Contest ended successfully!');
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Failed to end contest.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Server error ending contest.');
+            }
+        }
+
+        async function handleExtendContest(btn) {
+            const id = btn.dataset.id;
+            const mins = prompt('Enter number of minutes to extend this contest (e.g. 15, 30, 60):', '30');
+            if (!mins || isNaN(mins) || parseInt(mins) <= 0) return;
+
+            try {
+                const res = await fetch(`/api/admin/contests/${id}/extend`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ minutes: parseInt(mins) })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    alert(data.message || `Contest extended by ${mins} minutes!`);
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Failed to extend contest.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Server error extending contest.');
+            }
+        }
+
+        async function handleDeleteContest(btn) {
+            const id = btn.dataset.id;
+            const name = btn.dataset.name;
+            if (!confirm(`Are you sure you want to delete contest "${name}"? All contest submissions will be permanently removed.`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/admin/contests/${id}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    alert('Contest deleted successfully.');
+                    const row = document.querySelector(`tr[data-id="${id}"]`);
+                    if (row) row.remove();
+                } else {
+                    alert(data.message || 'Failed to delete contest.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Server error deleting contest.');
+            }
+        }
+    </script>
+</body>
+</html>

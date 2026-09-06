@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head', { pageTitle: 'Admin Dashboard' }) %>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <%- include('../partials/navbar', { activePage: 'admin' }) %>
+
+    <main class="admin-container">
+        <!-- Admin Header -->
+        <div class="admin-header">
+            <div class="admin-title-group">
+                <h1><i class="fa-solid fa-shield-halved" style="color: var(--primary);"></i> Admin Command Center</h1>
+                <p>Platform overview, content management, contest lifecycle, and user administration.</p>
+            </div>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                <a href="/admin/add-problem" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i> Add New Question
+                </a>
+                <a href="/create_contest" class="btn btn-secondary">
+                    <i class="fa-solid fa-trophy"></i> Host Contest
+                </a>
+            </div>
+        </div>
+
+        <!-- Admin Navigation Tabs -->
+        <nav class="admin-nav-tabs">
+            <a href="/admin" class="admin-tab active"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+            <a href="/admin/problems" class="admin-tab"><i class="fa-solid fa-code"></i> Questions Bank (<%= stats.totalProblems %>)</a>
+            <a href="/admin/add-problem" class="admin-tab"><i class="fa-solid fa-square-plus"></i> Add Question</a>
+            <a href="/admin/contests" class="admin-tab"><i class="fa-solid fa-trophy"></i> Contests (<%= stats.totalContests %>)</a>
+            <a href="/admin/users" class="admin-tab"><i class="fa-solid fa-users"></i> Users (<%= stats.totalUsers %>)</a>
+        </nav>
+
+        <!-- Metric Statistics Cards -->
+        <div class="admin-stat-grid">
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon stat-icon-purple">
+                    <i class="fa-solid fa-code"></i>
+                </div>
+                <div>
+                    <div class="admin-stat-val"><%= stats.totalProblems %></div>
+                    <div class="admin-stat-label">Coding Problems</div>
+                </div>
+            </div>
+
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon stat-icon-cyan">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <div>
+                    <div class="admin-stat-val"><%= stats.totalContests %></div>
+                    <div class="admin-stat-label">Total Contests (<%= stats.ongoingContests %> Active)</div>
+                </div>
+            </div>
+
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon stat-icon-emerald">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div>
+                    <div class="admin-stat-val"><%= stats.totalUsers %></div>
+                    <div class="admin-stat-label">Registered Coders</div>
+                </div>
+            </div>
+
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon stat-icon-amber">
+                    <i class="fa-solid fa-server"></i>
+                </div>
+                <div>
+                    <div class="admin-stat-val" style="font-size: 1.3rem; color: #34d399;"><i class="fa-solid fa-circle-check"></i> Operational</div>
+                    <div class="admin-stat-label">Multi-Engine Sandbox</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions & Recent Users -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;" class="form-grid-2">
+            <!-- Quick Management Shortcuts -->
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title"><i class="fa-solid fa-bolt" style="color: #fbbf24;"></i> Quick Actions</h3>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                    <a href="/admin/add-problem" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-sm); text-decoration: none; color: var(--text-main); transition: var(--transition);">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fa-solid fa-file-circle-plus" style="color: var(--primary); font-size: 1.2rem;"></i>
+                            <div>
+                                <div style="font-weight: 600;">Create Coding Question</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">Add problem statement, test cases, and constraints</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>
+                    </a>
+
+                    <a href="/create_contest" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-sm); text-decoration: none; color: var(--text-main); transition: var(--transition);">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fa-solid fa-calendar-plus" style="color: #22d3ee; font-size: 1.2rem;"></i>
+                            <div>
+                                <div style="font-weight: 600;">Schedule New Contest</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">Select problem pool, timer, and visibility</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>
+                    </a>
+
+                    <a href="/admin/contests" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-sm); text-decoration: none; color: var(--text-main); transition: var(--transition);">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fa-solid fa-stopwatch" style="color: #f87171; font-size: 1.2rem;"></i>
+                            <div>
+                                <div style="font-weight: 600;">Contest Operations & Ratings</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">End active contests, extend timers, compute ELO ratings</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>
+                    </a>
+
+                    <a href="/admin/users" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-sm); text-decoration: none; color: var(--text-main); transition: var(--transition);">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fa-solid fa-user-shield" style="color: #34d399; font-size: 1.2rem;"></i>
+                            <div>
+                                <div style="font-weight: 600;">User Role Management</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">Promote teachers/admins, inspect activity</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recent Users -->
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title"><i class="fa-solid fa-clock-rotate-left"></i> Recent Users</h3>
+                    <a href="/admin/users" style="font-size: 0.85rem; color: var(--primary); text-decoration: none;">View All &rarr;</a>
+                </div>
+                <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Role</th>
+                                <th>Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (recentUsers && recentUsers.length > 0) { %>
+                                <% recentUsers.forEach(u => { %>
+                                    <tr>
+                                        <td>
+                                            <div style="font-weight: 600;"><%= u.username %></div>
+                                            <div style="font-size: 0.8rem; color: var(--text-muted);"><%= u.email %></div>
+                                        </td>
+                                        <td>
+                                            <span class="badge-role <%= u.role === 'admin' ? 'badge-role-admin' : 'badge-role-user' %>">
+                                                <%= u.role %>
+                                            </span>
+                                        </td>
+                                        <td style="font-size: 0.85rem; color: var(--text-muted);">
+                                            <%= new Date(u.createdAt).toLocaleDateString() %>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="3" style="text-align: center; color: var(--text-muted);">No users found</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const role = localStorage.getItem('role');
+            if (role !== 'admin') {
+                alert('Access Restricted: You must be logged in as an Administrator.');
+                window.location.href = '/signin';
+            }
+        });
+    </script>
+</body>
+</html>

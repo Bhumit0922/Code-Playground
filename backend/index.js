@@ -39,6 +39,7 @@ const discussRoutes = require("./routes/discussRoutes");
 const contestRoutes = require("./routes/contestRoutes");
 const contestjoinRoutes = require("./routes/contestjoinRoutes");
 const contactRoutes = require("./routes/contactRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 // Mount API Endpoints
 app.use("/api/auth", authRoutes);
@@ -48,6 +49,8 @@ app.use("/api/discuss", discussRoutes);
 app.use("/api/contests/join", contestjoinRoutes);
 app.use("/api/contests", contestRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/admin", adminRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Compatibility authentication routes
 const bcrypt = require("bcryptjs");

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head', { pageTitle: 'Manage Users' }) %>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <%- include('../partials/navbar', { activePage: 'admin' }) %>
+
+    <main class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <div class="admin-title-group">
+                <h1><i class="fa-solid fa-users" style="color: #34d399;"></i> User Administration</h1>
+                <p>View registered participants, manage administrator roles, inspect coder ratings and problem solving stats.</p>
+            </div>
+            <div style="color: var(--text-muted); font-size: 0.95rem;">
+                Total Registered: <strong style="color: var(--text-main);"><%= users.length %></strong> coders
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="admin-nav-tabs">
+            <a href="/admin" class="admin-tab"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+            <a href="/admin/problems" class="admin-tab"><i class="fa-solid fa-code"></i> Questions Bank</a>
+            <a href="/admin/add-problem" class="admin-tab"><i class="fa-solid fa-square-plus"></i> Add Question</a>
+            <a href="/admin/contests" class="admin-tab"><i class="fa-solid fa-trophy"></i> Contests</a>
+            <a href="/admin/users" class="admin-tab active"><i class="fa-solid fa-users"></i> Users (<%= users.length %>)</a>
+        </nav>
+
+        <!-- Search Bar -->
+        <div class="admin-card" style="padding: 1.25rem;">
+            <input type="text" id="user-search" placeholder="Search coders by username or email address..." 
+                style="width: 100%; max-width: 500px; padding: 0.65rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: rgba(255,255,255,0.03); color: var(--text-main); outline: none;">
+        </div>
+
+        <!-- Users Table Card -->
+        <div class="admin-card" style="padding: 0; overflow: hidden;">
+            <div class="admin-table-wrapper" style="border: none;">
+                <table class="admin-table" id="users-table">
+                    <thead>
+                        <tr>
+                            <th>User Details</th>
+                            <th>Role</th>
+                            <th>Contest Rating</th>
+                            <th>Problems Solved</th>
+                            <th>Submissions</th>
+                            <th>Joined</th>
+                            <th>Role Permissions</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (users && users.length > 0) { %>
+                            <% users.forEach(u => { %>
+                                <tr data-id="<%= u._id %>" data-username="<%= u.username.toLowerCase() %>" data-email="<%= u.email.toLowerCase() %>">
+                                    <td>
+                                        <div style="font-weight: 600; font-size: 1rem;"><%= u.username %></div>
+                                        <div style="font-size: 0.8rem; color: var(--text-muted);"><%= u.email %></div>
+                                    </td>
+                                    <td>
+                                        <span id="role-badge-<%= u._id %>" class="badge-role <%= u.role === 'admin' ? 'badge-role-admin' : 'badge-role-user' %>">
+                                            <%= u.role %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <strong style="color: #22d3ee; font-size: 1rem;"><%= u.rating || 1500 %></strong>
+                                    </td>
+                                    <td>
+                                        <span style="font-weight: 600; color: #34d399;"><%= (u.problemsSolved || []).length %></span>
+                                    </td>
+                                    <td>
+                                        <span style="color: var(--text-muted);"><%= (u.submissions || []).length %></span>
+                                    </td>
+                                    <td style="font-size: 0.85rem; color: var(--text-muted);">
+                                        <%= new Date(u.createdAt).toLocaleDateString() %>
+                                    </td>
+                                    <td>
+                                        <% if (u.role === 'admin') { %>
+                                            <button type="button" data-id="<%= u._id %>" data-role="user" data-username="<%= u.username %>" onclick="handleRoleChange(this)" class="btn-action" style="background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.2);">
+                                                <i class="fa-solid fa-user-minus"></i> Demote to User
+                                            </button>
+                                        <% } else { %>
+                                            <button type="button" data-id="<%= u._id %>" data-role="admin" data-username="<%= u.username %>" onclick="handleRoleChange(this)" class="btn-action" style="background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.3);">
+                                                <i class="fa-solid fa-shield-halved"></i> Promote to Admin
+                                            </button>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <button type="button" data-id="<%= u._id %>" data-username="<%= u.username %>" onclick="handleDeleteUser(this)" class="btn-action btn-action-danger" title="Delete User">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                                    No users found in database.
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const role = localStorage.getItem('role');
+            if (role !== 'admin') {
+                alert('Access Restricted: You must be logged in as an Administrator.');
+                window.location.href = '/signin';
+            }
+
+            // Search filter
+            const searchInput = document.getElementById('user-search');
+            const rows = document.querySelectorAll('#users-table tbody tr');
+
+            if (searchInput) {
+                searchInput.addEventListener('input', () => {
+                    const q = searchInput.value.toLowerCase().trim();
+                    rows.forEach(row => {
+                        const u = row.dataset.username || '';
+                        const e = row.dataset.email || '';
+                        if (!q || u.includes(q) || e.includes(q)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        });
+
+        async function handleRoleChange(btn) {
+            const userId = btn.dataset.id;
+            const newRole = btn.dataset.role;
+            const username = btn.dataset.username;
+
+            if (!confirm(`Change role for "${username}" to "${newRole.toUpperCase()}"?`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/admin/users/${userId}/role`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ role: newRole })
+                });
+
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    alert(data.message || 'Role updated successfully.');
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Failed to update role.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Server error updating user role.');
+            }
+        }
+
+        async function handleDeleteUser(btn) {
+            const userId = btn.dataset.id;
+            const username = btn.dataset.username;
+            const currentUserId = localStorage.getItem('userId');
+            if (userId === currentUserId) {
+                alert('You cannot delete your own active administrator account.');
+                return;
+            }
+
+            if (!confirm(`Permanently delete user "${username}"? All submissions and records will be deleted.`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/admin/users/${userId}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    alert('User deleted successfully.');
+                    const row = document.querySelector(`tr[data-id="${userId}"]`);
+                    if (row) row.remove();
+                } else {
+                    alert(data.message || 'Failed to delete user.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Server error deleting user.');
+            }
+        }
+    </script>
+</body>
+</html>

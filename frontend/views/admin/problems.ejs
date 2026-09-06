@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head', { pageTitle: 'Manage Problems' }) %>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <%- include('../partials/navbar', { activePage: 'admin' }) %>
+
+    <main class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <div class="admin-title-group">
+                <h1><i class="fa-solid fa-code" style="color: var(--primary);"></i> Question & Problem Bank</h1>
+                <p>Add new programming questions, edit descriptions, adjust test cases, or remove outdated problems.</p>
+            </div>
+            <div>
+                <a href="/admin/add-problem" class="btn btn-primary" style="font-weight: 600;">
+                    <i class="fa-solid fa-plus"></i> Add New Question
+                </a>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="admin-nav-tabs">
+            <a href="/admin" class="admin-tab"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+            <a href="/admin/problems" class="admin-tab active"><i class="fa-solid fa-code"></i> Questions Bank (<%= problems.length %>)</a>
+            <a href="/admin/add-problem" class="admin-tab"><i class="fa-solid fa-square-plus"></i> Add Question</a>
+            <a href="/admin/contests" class="admin-tab"><i class="fa-solid fa-trophy"></i> Contests</a>
+            <a href="/admin/users" class="admin-tab"><i class="fa-solid fa-users"></i> Users</a>
+        </nav>
+
+        <!-- Search & Filter Controls -->
+        <div class="admin-card" style="padding: 1.25rem;">
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+                <div style="display: flex; gap: 1rem; flex: 1; max-width: 600px;">
+                    <input type="text" id="table-search" placeholder="Search questions by title or topic..." 
+                        style="flex: 1; padding: 0.65rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: rgba(255,255,255,0.03); color: var(--text-main); outline: none;">
+                    <select id="filter-difficulty" style="padding: 0.65rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-main); outline: none;">
+                        <option value="all">All Difficulties</option>
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+                    </select>
+                </div>
+                <div style="color: var(--text-muted); font-size: 0.9rem;">
+                    Showing <strong id="visible-count" style="color: var(--text-main);"><%= problems.length %></strong> problems
+                </div>
+            </div>
+        </div>
+
+        <!-- Problems Table -->
+        <div class="admin-card" style="padding: 0; overflow: hidden;">
+            <div class="admin-table-wrapper" style="border: none;">
+                <table class="admin-table" id="problems-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Difficulty</th>
+                            <th>Topic</th>
+                            <th>Submissions</th>
+                            <th>Acceptance</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (problems && problems.length > 0) { %>
+                            <% problems.forEach(p => { %>
+                                <tr data-id="<%= p._id %>" data-title="<%= p.title.toLowerCase() %>" data-topic="<%= (p.topic || '').toLowerCase() %>" data-difficulty="<%= p.difficulty %>">
+                                    <td>
+                                        <div style="font-weight: 600; font-size: 1rem;"><%= p.title %></div>
+                                        <div style="font-size: 0.75rem; color: var(--text-muted);">ID: <%= p._id %></div>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-<%= p.difficulty.toLowerCase() %>">
+                                            <%= p.difficulty %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span style="color: var(--text-muted); font-size: 0.88rem;">
+                                            <i class="fa-solid fa-folder-open" style="font-size: 0.75rem;"></i> <%= p.topic || 'General' %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">
+                                            <%= p.submissionsCount || 0 %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span style="font-size: 0.9rem; font-weight: 600; color: #34d399;">
+                                            <%= p.acceptance || '0.0%' %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                            <a href="/editcode/<%= p._id %>" target="_blank" class="btn-action" style="background: rgba(255,255,255,0.05); color: var(--text-main);" title="Preview Editor">
+                                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Preview
+                                            </a>
+                                            <a href="/admin/edit-problem/<%= p._id %>" class="btn-action btn-action-edit" title="Edit Problem">
+                                                <i class="fa-solid fa-pen-to-square"></i> Edit
+                                            </a>
+                                            <button type="button" data-id="<%= p._id %>" data-title="<%= p.title %>" onclick="handleDeleteProblem(this)" class="btn-action btn-action-danger" title="Delete Problem">
+                                                <i class="fa-solid fa-trash-can"></i> Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                                    <i class="fa-solid fa-box-open" style="font-size: 2.5rem; margin-bottom: 0.75rem; display: block;"></i>
+                                    No problems found. Click "Add New Question" above to create your first problem.
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const role = localStorage.getItem('role');
+            if (role !== 'admin') {
+                alert('Access Restricted: You must be logged in as an Administrator.');
+                window.location.href = '/signin';
+            }
+
+            // Live search and filter
+            const searchInput = document.getElementById('table-search');
+            const filterDiff = document.getElementById('filter-difficulty');
+            const rows = document.querySelectorAll('#problems-table tbody tr');
+            const countLabel = document.getElementById('visible-count');
+
+            function filterRows() {
+                const query = searchInput.value.toLowerCase().trim();
+                const diff = filterDiff.value;
+                let visible = 0;
+
+                rows.forEach(row => {
+                    const title = row.dataset.title || '';
+                    const topic = row.dataset.topic || '';
+                    const rowDiff = row.dataset.difficulty || '';
+
+                    const matchesQuery = !query || title.includes(query) || topic.includes(query);
+                    const matchesDiff = diff === 'all' || rowDiff === diff;
+
+                    if (matchesQuery && matchesDiff) {
+                        row.style.display = '';
+                        visible++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                if (countLabel) countLabel.textContent = visible;
+            }
+
+            if (searchInput) searchInput.addEventListener('input', filterRows);
+            if (filterDiff) filterDiff.addEventListener('change', filterRows);
+        });
+
+        async function handleDeleteProblem(btn) {
+            const id = btn.dataset.id;
+            const title = btn.dataset.title;
+
+            if (!confirm(`Are you sure you want to permanently delete "${title}"? This cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/problems/${id}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    alert('Problem deleted successfully.');
+                    const row = document.querySelector(`tr[data-id="${id}"]`);
+                    if (row) row.remove();
+                } else {
+                    alert(data.message || 'Failed to delete problem.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Server error deleting problem.');
+            }
+        }
+    </script>
+</body>
+</html>

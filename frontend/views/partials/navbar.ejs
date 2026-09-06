@@ -13,6 +13,7 @@
       <li><a href="/discuss" class="cp-nav-link <%= typeof activePage !== 'undefined' && activePage === 'discuss' ? 'active' : '' %>"><i class="fas fa-comments"></i> Discuss</a></li>
       <li><a href="/about" class="cp-nav-link <%= typeof activePage !== 'undefined' && activePage === 'about' ? 'active' : '' %>"><i class="fas fa-info-circle"></i> About</a></li>
       <li><a href="/contact" class="cp-nav-link <%= typeof activePage !== 'undefined' && activePage === 'contact' ? 'active' : '' %>"><i class="fas fa-envelope"></i> Contact</a></li>
+      <li id="cp-admin-nav-item" style="display:none;"><a href="/admin" class="cp-nav-link <%= typeof activePage !== 'undefined' && activePage === 'admin' ? 'active' : '' %>" style="color: #818cf8;"><i class="fas fa-shield-halved"></i> Admin</a></li>
     </ul>
 
     <!-- Desktop Auth Section -->
@@ -48,6 +49,7 @@
     <li><a href="/discuss" class="cp-drawer-link <%= typeof activePage !== 'undefined' && activePage === 'discuss' ? 'active' : '' %>"><i class="fas fa-comments"></i> Discuss</a></li>
     <li><a href="/about" class="cp-drawer-link <%= typeof activePage !== 'undefined' && activePage === 'about' ? 'active' : '' %>"><i class="fas fa-info-circle"></i> About Us</a></li>
     <li><a href="/contact" class="cp-drawer-link <%= typeof activePage !== 'undefined' && activePage === 'contact' ? 'active' : '' %>"><i class="fas fa-envelope"></i> Contact</a></li>
+    <li id="cp-admin-drawer-item" style="display:none;"><a href="/admin" class="cp-drawer-link <%= typeof activePage !== 'undefined' && activePage === 'admin' ? 'active' : '' %>" style="color: #818cf8;"><i class="fas fa-shield-halved"></i> Admin Console</a></li>
   </ul>
 
   <!-- Mobile Drawer Auth -->
@@ -88,13 +90,22 @@
   // Authentication State Sync
   function syncAuthState() {
     const userId = localStorage.getItem('userId');
+    const role = localStorage.getItem('role');
     const username = localStorage.getItem('username') || localStorage.getItem('userEmail') || 'User';
     const desktopAuth = document.getElementById('cp-desktop-auth');
     const mobileAuth = document.getElementById('cp-mobile-auth');
+    const adminNavItem = document.getElementById('cp-admin-nav-item');
+    const adminDrawerItem = document.getElementById('cp-admin-drawer-item');
+
+    if (role === 'admin') {
+      if (adminNavItem) adminNavItem.style.display = 'block';
+      if (adminDrawerItem) adminDrawerItem.style.display = 'block';
+    }
 
     if (userId) {
       // Logged in UI
       const userPic = localStorage.getItem('profilePicture') || '/profile.png';
+      const adminDropdownLink = role === 'admin' ? `<a href="/admin" style="color:#818cf8; font-weight:600;"><i class="fas fa-shield-halved"></i> Admin Console</a>` : '';
       
       if (desktopAuth) {
         desktopAuth.innerHTML = `
@@ -104,6 +115,7 @@
             <i class="fas fa-chevron-down" style="font-size:0.75rem; color:#94a3b8;"></i>
             
             <div class="cp-user-dropdown" id="cp-user-dropdown">
+              ${adminDropdownLink}
               <a href="/profile"><i class="fas fa-user-circle"></i> My Profile</a>
               <a href="/create_contest"><i class="fas fa-plus-circle"></i> Create Contest</a>
               <button type="button" class="logout-item" id="cp-logout-btn"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
@@ -113,7 +125,9 @@
       }
 
       if (mobileAuth) {
+        const mobileAdminLink = role === 'admin' ? `<a href="/admin" class="cp-drawer-link" style="color:#818cf8;"><i class="fas fa-shield-halved"></i> Admin Console</a>` : '';
         mobileAuth.innerHTML = `
+          ${mobileAdminLink}
           <a href="/profile" class="cp-drawer-link"><i class="fas fa-user-circle"></i> Profile (${username.split('@')[0]})</a>
           <a href="/create_contest" class="cp-drawer-link"><i class="fas fa-plus-circle"></i> Create Contest</a>
           <button type="button" class="cp-drawer-link" id="cp-mobile-logout-btn" style="background:transparent; border:none; color:#f87171; cursor:pointer; width:100%;"><i class="fas fa-sign-out-alt"></i> Sign Out</button>

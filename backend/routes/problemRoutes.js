@@ -254,6 +254,80 @@ router.post("/:id/submit", async (req, res) => {
     }
 });
 
+// @route PUT /api/problems/:id
+// @desc Update an existing problem
+router.put("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid problem ID" });
+        }
+
+        const {
+            title,
+            description,
+            difficulty,
+            topic,
+            tags,
+            inputFormat,
+            outputFormat,
+            constraints,
+            sampleInput,
+            sampleOutput,
+            testCases
+        } = req.body;
+
+        const updateData = {};
+        if (title !== undefined) updateData.title = title;
+        if (description !== undefined) updateData.description = description;
+        if (difficulty !== undefined) updateData.difficulty = difficulty;
+        if (topic !== undefined) updateData.topic = topic;
+        if (tags !== undefined) updateData.tags = Array.isArray(tags) ? tags : tags.split(',').map(t => t.trim()).filter(Boolean);
+        if (inputFormat !== undefined) updateData.inputFormat = inputFormat;
+        if (outputFormat !== undefined) updateData.outputFormat = outputFormat;
+        if (constraints !== undefined) updateData.constraints = constraints;
+        if (sampleInput !== undefined) updateData.sampleInput = sampleInput;
+        if (sampleOutput !== undefined) updateData.sampleOutput = sampleOutput;
+        if (testCases !== undefined) updateData.testCases = testCases;
+
+        const updatedProblem = await Problem.findByIdAndUpdate(
+            id,
+            { $set: updateData },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedProblem) {
+            return res.status(404).json({ message: "Problem not found" });
+        }
+
+        res.json({ success: true, problem: updatedProblem });
+    } catch (error) {
+        console.error("Error updating problem:", error);
+        res.status(500).json({ message: "Error updating problem: " + error.message });
+    }
+});
+
+// @route DELETE /api/problems/:id
+// @desc Delete a problem
+router.delete("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid problem ID" });
+        }
+
+        const deleted = await Problem.findByIdAndDelete(id);
+        if (!deleted) {
+            return res.status(404).json({ message: "Problem not found" });
+        }
+
+        res.json({ success: true, message: `Problem '${deleted.title}' deleted successfully` });
+    } catch (error) {
+        console.error("Error deleting problem:", error);
+        res.status(500).json({ message: "Error deleting problem: " + error.message });
+    }
+});
+
 // @route POST /api/problems/contest/:contestId/end
 router.post("/contest/:contestId/end", async (req, res) => {
     try {
