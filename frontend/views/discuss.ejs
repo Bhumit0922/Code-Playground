@@ -153,10 +153,7 @@
             const closeViewBtn = document.getElementById('close-view-modal');
 
             openCreateBtn.addEventListener('click', () => {
-                const userId = localStorage.getItem('userId');
-                if (!userId) {
-                    alert('Please sign in to start a discussion.');
-                    window.location.href = '/signin';
+                if (!window.requireAuth('Please sign in to start a community discussion.')) {
                     return;
                 }
                 createModal.classList.add('show');
@@ -255,12 +252,15 @@
                     if (res.ok) {
                         createModal.classList.remove('show');
                         document.getElementById('discussion-form').reset();
+                        window.showToast('Discussion published successfully!', 'success');
                         fetchDiscussions();
                     } else {
-                        alert('Failed to post discussion');
+                        const errData = await res.json().catch(() => ({}));
+                        window.showToast(errData.message || 'Failed to post discussion', 'error');
                     }
                 } catch (err) {
                     console.error(err);
+                    window.showToast('Error posting discussion. Please try again.', 'error');
                 }
             });
 
@@ -296,12 +296,10 @@
 
             // Post comment
             document.getElementById('submit-comment').addEventListener('click', async () => {
-                const userId = localStorage.getItem('userId');
-                if (!userId) {
-                    alert('Please sign in to comment.');
-                    window.location.href = '/signin';
+                if (!window.requireAuth('Please sign in to join the conversation and comment.')) {
                     return;
                 }
+                const userId = localStorage.getItem('userId');
 
                 const content = document.getElementById('comment-input').value.trim();
                 if (!content || !currentDiscussionId) return;
@@ -315,10 +313,14 @@
 
                     if (res.ok) {
                         document.getElementById('comment-input').value = '';
+                        window.showToast('Reply posted successfully!', 'success');
                         window.viewDiscussion(currentDiscussionId);
+                    } else {
+                        window.showToast('Failed to post reply. Please try again.', 'error');
                     }
                 } catch (err) {
                     console.error(err);
+                    window.showToast('Server error posting reply.', 'error');
                 }
             });
         });

@@ -132,7 +132,7 @@
             </form>
 
             <div class="auth-footer">
-                Don't have an account? <a href="/signup">Create one now</a>
+                Don't have an account? <a href="/signup" id="signup-link">Create one now</a>
             </div>
         </div>
     </main>
@@ -144,6 +144,14 @@
         const form = document.getElementById('signin-form');
         const alertBox = document.getElementById('auth-alert');
         const submitBtn = document.getElementById('submit-btn');
+
+        // Preserve redirect link in signup href
+        const initialParams = new URLSearchParams(window.location.search);
+        const redirectParam = initialParams.get('redirect');
+        if (redirectParam) {
+            const signupLink = document.getElementById('signup-link');
+            if (signupLink) signupLink.href = `/signup?redirect=${encodeURIComponent(redirectParam)}`;
+        }
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -172,7 +180,13 @@
                     if (data.token) localStorage.setItem('token', data.token);
                     if (data.profilePicture) localStorage.setItem('profilePicture', data.profilePicture);
 
-                    window.location.href = '/explore';
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirect = urlParams.get('redirect');
+                    if (redirect && redirect.startsWith('/')) {
+                        window.location.href = decodeURIComponent(redirect);
+                    } else {
+                        window.location.href = '/explore';
+                    }
                 } else {
                     alertBox.textContent = data.message || 'Invalid credentials. Please try again.';
                     alertBox.style.display = 'block';

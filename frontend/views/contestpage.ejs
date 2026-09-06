@@ -340,14 +340,16 @@
                 });
                 const data = await res.json();
                 if (res.ok) {
-                    alert('Contest ended successfully!');
-                    window.location.href = `/contest/${contestId}/leaderboard`;
+                    window.showToast('Contest ended successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.href = `/contest/${contestId}/leaderboard`;
+                    }, 800);
                 } else {
-                    alert(data.message || 'Error ending contest');
+                    window.showToast(data.message || 'Error ending contest', 'error');
                 }
             } catch (err) {
                 console.error('End contest error:', err);
-                alert('Failed to end contest');
+                window.showToast('Failed to end contest', 'error');
             }
         });
 

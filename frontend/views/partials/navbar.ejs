@@ -59,8 +59,89 @@
   </div>
 </aside>
 
+<!-- Global Auth Required Modal -->
+<div class="cp-auth-overlay" id="cp-auth-overlay">
+  <div class="cp-auth-modal">
+    <div class="cp-auth-modal-icon">
+      <i class="fas fa-lock"></i>
+    </div>
+    <h3 id="cp-auth-modal-title">Sign In Required</h3>
+    <p id="cp-auth-modal-desc">You need to sign in to access this feature and track your progress.</p>
+    <div class="cp-auth-modal-actions">
+      <a href="/signin" id="cp-auth-modal-login-btn" class="cp-auth-btn-login">
+        <i class="fas fa-sign-in-alt"></i> Sign In to Continue
+      </a>
+      <a href="/signup" class="cp-auth-btn-signup">
+        <i class="fas fa-user-plus"></i> Create Free Account
+      </a>
+      <button type="button" class="cp-auth-btn-cancel" id="cp-auth-modal-cancel">
+        Dismiss
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Global Toast Container -->
+<div class="cp-toast-container" id="cp-toast-container"></div>
+
 <script>
 (function() {
+  // Global Notification & Auth helpers
+  window.showToast = function(message, type = 'info') {
+    const container = document.getElementById('cp-toast-container');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.className = `cp-toast toast-${type}`;
+    const iconMap = {
+      success: 'fa-check-circle',
+      error: 'fa-triangle-exclamation',
+      warning: 'fa-circle-exclamation',
+      info: 'fa-circle-info'
+    };
+    const icon = iconMap[type] || 'fa-bell';
+    toast.innerHTML = `<i class="fas ${icon}"></i> <span>${message}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(50px)';
+      setTimeout(() => toast.remove(), 300);
+    }, 3500);
+  };
+
+  window.showAuthModal = function(actionDesc) {
+    const overlay = document.getElementById('cp-auth-overlay');
+    const desc = document.getElementById('cp-auth-modal-desc');
+    const loginBtn = document.getElementById('cp-auth-modal-login-btn');
+    if (desc && actionDesc) desc.textContent = actionDesc;
+    if (loginBtn) {
+      const currentUrl = encodeURIComponent(window.location.pathname + window.location.search);
+      loginBtn.href = `/signin?redirect=${currentUrl}`;
+    }
+    if (overlay) overlay.classList.add('show');
+  };
+
+  window.hideAuthModal = function() {
+    const overlay = document.getElementById('cp-auth-overlay');
+    if (overlay) overlay.classList.remove('show');
+  };
+
+  window.requireAuth = function(actionDesc = 'Please sign in to continue.') {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      window.showAuthModal(actionDesc);
+      return false;
+    }
+    return true;
+  };
+
+  const cancelBtn = document.getElementById('cp-auth-modal-cancel');
+  if (cancelBtn) cancelBtn.addEventListener('click', window.hideAuthModal);
+  const overlayElem = document.getElementById('cp-auth-overlay');
+  if (overlayElem) {
+    overlayElem.addEventListener('click', (e) => {
+      if (e.target === overlayElem) window.hideAuthModal();
+    });
+  }
   // Mobile drawer controls
   const toggleBtn = document.getElementById('cp-mobile-toggle-btn');
   const closeBtn = document.getElementById('cp-drawer-close-btn');

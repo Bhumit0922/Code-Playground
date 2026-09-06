@@ -73,32 +73,34 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        .editor-controls {
-            padding: 1rem 1.25rem;
-            background: #f8fafc;
+        .editor-controls-bar {
+            padding: 0.75rem 1.25rem;
+            background: #ffffff;
+            border-top: 1px solid var(--border-color);
             display: flex;
-            flex-direction: column;
-            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.75rem;
         }
 
         .controls-row {
             display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
+            gap: 0.6rem;
             align-items: center;
         }
 
         .btn-action {
-            padding: 0.65rem 1.25rem;
+            padding: 0.55rem 1.1rem;
             border-radius: var(--radius-sm);
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             cursor: pointer;
             border: none;
             transition: var(--transition);
             display: inline-flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.45rem;
         }
 
         .btn-run {
@@ -118,28 +120,509 @@
         .btn-submit {
             background: var(--easy);
             color: white;
-            margin-left: auto;
         }
         .btn-submit:hover { background: #059669; }
 
-        .result-panel {
+        .btn-quick-toggle {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 0.5rem 0.8rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .btn-quick-toggle:hover {
             background: #f8fafc;
-            border-top: 1px solid var(--border-color);
-            padding: 1.25rem;
-            max-height: 250px;
+            color: var(--dark);
+        }
+
+        /* ================= Modern IDE Console System ================= */
+        .ide-console-container {
+            background: #0f172a;
+            border-top: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            height: 310px;
+            min-height: 240px;
+            transition: height 0.25s ease;
+            color: #f1f5f9;
+        }
+
+        .ide-console-container.expanded {
+            height: 520px;
+        }
+
+        .ide-console-header {
+            background: #1e293b;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 0.75rem;
+            min-height: 42px;
+            user-select: none;
+        }
+
+        .ide-console-tabs {
+            display: flex;
+            gap: 0.25rem;
+            height: 100%;
+        }
+
+        .ide-console-tab {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: #94a3b8;
+            font-size: 0.84rem;
+            font-weight: 500;
+            padding: 0.65rem 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            transition: all 0.2s ease;
+        }
+
+        .ide-console-tab:hover {
+            color: #f8fafc;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .ide-console-tab.active {
+            color: #38bdf8;
+            border-bottom-color: #38bdf8;
+            font-weight: 600;
+            background: rgba(56, 189, 248, 0.08);
+        }
+
+        .ide-tab-pill {
+            font-size: 0.72rem;
+            padding: 0.1rem 0.45rem;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+
+        .ide-tab-pill.passed {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+
+        .ide-tab-pill.failed {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .ide-console-tools {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .ide-console-icon-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: #94a3b8;
+            border-radius: 4px;
+            padding: 0.35rem 0.5rem;
+            cursor: pointer;
+            font-size: 0.82rem;
+            transition: all 0.2s ease;
+        }
+
+        .ide-console-icon-btn:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #475569;
+        }
+
+        .ide-console-body {
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .ide-console-panel {
+            display: none;
+            padding: 1rem;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        .ide-console-panel.active {
+            display: block;
+        }
+
+        /* Empty State */
+        .ide-empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 160px;
+            color: #64748b;
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .ide-empty-icon {
+            font-size: 2.2rem;
+            color: #475569;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Summary Banner */
+        .ide-summary-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.65rem 1rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.85rem;
+            font-size: 0.88rem;
+        }
+
+        .ide-summary-banner.banner-success {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            color: #34d399;
+        }
+
+        .ide-summary-banner.banner-error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            color: #fca5a5;
+        }
+
+        .ide-summary-status {
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Selector Pills for Cases */
+        .ide-tc-selector-bar {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.85rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .tc-pill {
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #cbd5e1;
+            font-size: 0.82rem;
+            font-weight: 600;
+            padding: 0.4rem 0.85rem;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s;
+        }
+
+        .tc-pill:hover {
+            background: #334155;
+            color: #ffffff;
+        }
+
+        .tc-pill.passed {
+            border-color: rgba(16, 185, 129, 0.4);
+            color: #a7f3d0;
+        }
+
+        .tc-pill.passed i {
+            color: #10b981;
+        }
+
+        .tc-pill.failed {
+            border-color: rgba(239, 68, 68, 0.4);
+            color: #fecaca;
+        }
+
+        .tc-pill.failed i {
+            color: #ef4444;
+        }
+
+        .tc-pill.active {
+            background: #2563eb !important;
+            border-color: #3b82f6 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+        }
+
+        .tc-pill.active i {
+            color: #ffffff !important;
+        }
+
+        /* Testcase IO Cards */
+        .ide-io-card {
+            margin-bottom: 0.75rem;
+        }
+
+        .ide-io-header {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #94a3b8;
+            margin-bottom: 0.35rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ide-io-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        @media (max-width: 768px) {
+            .ide-io-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .ide-io-box {
+            background: #090d16;
+            border: 1px solid #1e293b;
+            border-radius: 6px;
+            padding: 0.65rem 0.85rem;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 0.84rem;
+            color: #e2e8f0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin: 0;
+            max-height: 120px;
             overflow-y: auto;
         }
 
-        .output-box {
+        .ide-expected-box {
+            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(16, 185, 129, 0.05);
+            color: #a7f3d0;
+        }
+
+        .ide-actual-box.match {
+            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(16, 185, 129, 0.05);
+            color: #a7f3d0;
+        }
+
+        .ide-actual-box.mismatch {
+            border-color: rgba(239, 68, 68, 0.4);
+            background: rgba(239, 68, 68, 0.06);
+            color: #fca5a5;
+        }
+
+        .ide-error-box {
+            border-color: rgba(239, 68, 68, 0.5);
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+        }
+
+        .ide-match-tag {
+            font-size: 0.72rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .ide-match-tag.match {
+            background: #064e3b;
+            color: #34d399;
+        }
+
+        .ide-match-tag.mismatch {
+            background: #7f1d1d;
+            color: #fca5a5;
+        }
+
+        .ide-btn-copy {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            cursor: pointer;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+        }
+
+        .ide-btn-copy:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Terminal Window */
+        .ide-terminal-window {
+            background: #070b12;
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 200px;
+        }
+
+        .ide-terminal-titlebar {
+            background: #0f172a;
+            border-bottom: 1px solid #1e293b;
+            padding: 0.45rem 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.78rem;
+            color: #94a3b8;
+        }
+
+        .ide-term-dots {
+            display: flex;
+            gap: 0.35rem;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #eab308; }
+        .dot-green { background: #22c55e; }
+
+        .ide-term-title {
+            font-weight: 500;
+        }
+
+        .ide-term-lang-tag {
+            margin-left: auto;
             background: #1e293b;
-            color: #f8fafc;
-            font-family: 'Fira Code', monospace;
-            padding: 1rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.88rem;
+            color: #38bdf8;
+            padding: 0.1rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+        }
+
+        .ide-terminal-screen {
+            padding: 0.85rem 1rem;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.86rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+            overflow-y: auto;
+            flex: 1;
             white-space: pre-wrap;
             word-break: break-word;
-            margin-top: 0.5rem;
+        }
+
+        .term-line.term-dim {
+            color: #64748b;
+        }
+
+        .term-line.term-prompt {
+            color: #38bdf8;
+        }
+
+        .term-line.term-error {
+            color: #f87171;
+        }
+
+        .term-line.term-success {
+            color: #4ade80;
+        }
+
+        .term-caret {
+            color: #22c55e;
+            font-weight: bold;
+            margin-right: 0.4rem;
+        }
+
+        /* Custom Input Tab */
+        .ide-custom-input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            height: 100%;
+        }
+
+        .ide-custom-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.84rem;
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+
+        .ide-btn-secondary {
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #93c5fd;
+            padding: 0.35rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ide-btn-secondary:hover {
+            background: #334155;
+            color: #ffffff;
+        }
+
+        #custom-input-text {
+            width: 100%;
+            flex: 1;
+            min-height: 90px;
+            background: #090d16;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 0.75rem;
+            color: #f1f5f9;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.86rem;
+            outline: none;
+            resize: vertical;
+        }
+
+        #custom-input-text:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+        }
+
+        .ide-custom-tip {
+            font-size: 0.76rem;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .ide-custom-tip code {
+            background: #1e293b;
+            color: #38bdf8;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
         }
 
         .mobile-view-tabs {
@@ -302,27 +785,144 @@
             <!-- Monaco Editor Container -->
             <div id="code-editor-container"></div>
 
-            <!-- Editor Controls -->
-            <div class="editor-controls">
-                <div style="display: flex; flex-direction: column; gap: 0.4rem;">
-                    <label for="custom-input" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Custom Stdin Input (Optional):</label>
-                    <textarea id="custom-input" rows="2" placeholder="Provide custom input to pass to your program..." style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-family: monospace; font-size: 0.85rem; outline: none;"></textarea>
+            <!-- Editor Controls Bar -->
+            <div class="editor-controls-bar">
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <button type="button" class="btn-quick-toggle" id="quick-tab-custominput">
+                        <i class="fas fa-keyboard"></i> Stdin Input
+                    </button>
+                    <button type="button" class="btn-quick-toggle" id="quick-tab-terminal">
+                        <i class="fas fa-terminal"></i> Terminal
+                    </button>
                 </div>
-
                 <div class="controls-row">
-                    <button id="btn-run" class="btn-action btn-run"><i class="fas fa-play"></i> Run Code</button>
-                    <button id="btn-test" class="btn-action btn-test"><i class="fas fa-check-double"></i> Test All Cases</button>
-                    <button id="btn-submit" class="btn-action btn-submit"><i class="fas fa-paper-plane"></i> Submit Solution</button>
+                    <button id="btn-run" class="btn-action btn-run" title="Run code with custom input"><i class="fas fa-play"></i> Run Code</button>
+                    <button id="btn-test" class="btn-action btn-test" title="Test code against problem test cases"><i class="fas fa-check-double"></i> Test All Cases</button>
+                    <button id="btn-submit" class="btn-action btn-submit" title="Submit solution for grading and score"><i class="fas fa-paper-plane"></i> Submit Solution</button>
                 </div>
             </div>
 
-            <!-- Output / Results Section -->
-            <div class="result-panel" id="result-panel">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <strong style="font-size: 0.9rem; color: var(--dark);" id="output-heading">Execution Output:</strong>
-                    <span id="exec-status-badge"></span>
+            <!-- Modern IDE Console Section -->
+            <div class="ide-console-container" id="ide-console">
+                <!-- Console Header Bar -->
+                <div class="ide-console-header">
+                    <div class="ide-console-tabs">
+                        <button class="ide-console-tab active" data-tab="testcases" id="tab-btn-testcases">
+                            <i class="fas fa-list-check"></i> <span>Test Results</span>
+                            <span class="ide-tab-pill" id="tc-count-pill" style="display:none;"></span>
+                        </button>
+                        <button class="ide-console-tab" data-tab="terminal" id="tab-btn-terminal">
+                            <i class="fas fa-terminal"></i> <span>Terminal Output</span>
+                        </button>
+                        <button class="ide-console-tab" data-tab="custominput" id="tab-btn-custominput">
+                            <i class="fas fa-keyboard"></i> <span>Custom Input</span>
+                        </button>
+                    </div>
+
+                    <div class="ide-console-tools">
+                        <span id="exec-status-badge"></span>
+                        <button class="ide-console-icon-btn" id="btn-clear-console" title="Clear console output">
+                            <i class="fas fa-eraser"></i>
+                        </button>
+                        <button class="ide-console-icon-btn" id="btn-toggle-expand" title="Expand / Collapse Console">
+                            <i class="fas fa-up-right-and-down-left-from-center"></i>
+                        </button>
+                    </div>
                 </div>
-                <div class="output-box" id="output-box">Ready to execute. Click 'Run Code' or 'Test All Cases'.</div>
+
+                <!-- Console Body Panels -->
+                <div class="ide-console-body">
+                    <!-- Panel 1: Test Cases -->
+                    <div class="ide-console-panel active" id="console-panel-testcases">
+                        <div id="testcases-empty-state" class="ide-empty-state">
+                            <i class="fas fa-code-compare ide-empty-icon"></i>
+                            <p style="margin: 0; font-size: 0.9rem;">Ready to test. Click <strong>Test All Cases</strong> or <strong>Submit Solution</strong> to evaluate your code.</p>
+                        </div>
+
+                        <div id="testcases-content-area" style="display:none;">
+                            <!-- Summary Banner -->
+                            <div id="testcases-summary-banner" class="ide-summary-banner">
+                                <div class="ide-summary-status" id="summary-status-text">Accepted</div>
+                                <div class="ide-summary-stats" id="summary-stats-text">Passed all test cases</div>
+                            </div>
+
+                            <!-- Case selector pills -->
+                            <div class="ide-tc-selector-bar" id="tc-selector-bar"></div>
+
+                            <!-- Active Case Detail Cards -->
+                            <div class="ide-tc-detail" id="tc-detail-container">
+                                <div class="ide-io-card">
+                                    <div class="ide-io-header">
+                                        <span><i class="fas fa-arrow-right-to-bracket"></i> Standard Input:</span>
+                                        <button class="ide-btn-copy" onclick="copyTcInput()"><i class="far fa-copy"></i> Copy</button>
+                                    </div>
+                                    <pre class="ide-io-box" id="tc-input-box"></pre>
+                                </div>
+
+                                <div class="ide-io-grid">
+                                    <div class="ide-io-card">
+                                        <div class="ide-io-header">
+                                            <span style="color: #34d399;"><i class="fas fa-bullseye"></i> Expected Output:</span>
+                                        </div>
+                                        <pre class="ide-io-box ide-expected-box" id="tc-expected-box"></pre>
+                                    </div>
+
+                                    <div class="ide-io-card">
+                                        <div class="ide-io-header">
+                                            <span><i class="fas fa-terminal"></i> Your Output:</span>
+                                            <span class="ide-match-tag" id="tc-match-tag">Matched</span>
+                                        </div>
+                                        <pre class="ide-io-box ide-actual-box" id="tc-actual-box"></pre>
+                                    </div>
+                                </div>
+
+                                <!-- Error Card if Case Failed with Compiler/Runtime Error -->
+                                <div class="ide-io-card" id="tc-error-card" style="display:none; margin-top:0.6rem;">
+                                    <div class="ide-io-header" style="color: #f87171;">
+                                        <span><i class="fas fa-triangle-exclamation"></i> Runtime / Execution Diagnostics:</span>
+                                    </div>
+                                    <pre class="ide-io-box ide-error-box" id="tc-error-box"></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel 2: Terminal Output -->
+                    <div class="ide-console-panel" id="console-panel-terminal">
+                        <div class="ide-terminal-window">
+                            <div class="ide-terminal-titlebar">
+                                <div class="ide-term-dots">
+                                    <span class="dot dot-red"></span>
+                                    <span class="dot dot-yellow"></span>
+                                    <span class="dot dot-green"></span>
+                                </div>
+                                <span class="ide-term-title">Code Playground Cloud Sandbox</span>
+                                <span class="ide-term-lang-tag" id="term-lang-tag">PYTHON</span>
+                            </div>
+                            <div class="ide-terminal-screen" id="terminal-screen">
+                                <div class="term-line term-dim">// Code Playground Cloud Execution Engine v2.4</div>
+                                <div class="term-line term-dim">// Write your code and click 'Run Code' to execute.</div>
+                                <div class="term-line term-prompt"><span class="term-caret">$</span> ready</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel 3: Custom Input -->
+                    <div class="ide-console-panel" id="console-panel-custominput">
+                        <div class="ide-custom-input-wrapper">
+                            <div class="ide-custom-header">
+                                <span><i class="fas fa-keyboard"></i> Standard Input (stdin):</span>
+                                <button type="button" class="ide-btn-secondary" id="btn-load-sample-input">
+                                    <i class="fas fa-file-import"></i> Use Sample Input
+                                </button>
+                            </div>
+                            <textarea id="custom-input-text" placeholder="Type standard input data for your program during 'Run Code'..." rows="4"></textarea>
+                            <div class="ide-custom-tip">
+                                <i class="fas fa-circle-info"></i> Your code can read standard input via <code>stdin</code>.
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -437,24 +1037,249 @@
         btnCode.addEventListener('click', () => setMobileTab('code'));
         btnOutput.addEventListener('click', () => setMobileTab('output'));
 
-        // Execution Handling
-        const outputBox = document.getElementById('output-box');
-        const badge = document.getElementById('exec-status-badge');
+        // ==========================================
+        // MODERN IDE CONSOLE CONTROLLER
+        // ==========================================
+        const SAMPLE_INPUT = <%- JSON.stringify(problem.sampleInput || '') %>;
+        let currentTestResults = [];
+        let activeTcIndex = 0;
+
+        // Console Tab Switching
+        function switchConsoleTab(tabName) {
+            document.querySelectorAll('.ide-console-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.ide-console-panel').forEach(p => p.classList.remove('active'));
+
+            const targetTab = document.getElementById(`tab-btn-${tabName}`);
+            const targetPanel = document.getElementById(`console-panel-${tabName}`);
+            if (targetTab) targetTab.classList.add('active');
+            if (targetPanel) targetPanel.classList.add('active');
+        }
+
+        document.querySelectorAll('.ide-console-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                switchConsoleTab(tab.dataset.tab);
+            });
+        });
+
+        // Quick Links
+        const quickStdinBtn = document.getElementById('quick-tab-custominput');
+        if (quickStdinBtn) {
+            quickStdinBtn.addEventListener('click', () => {
+                switchConsoleTab('custominput');
+                document.getElementById('custom-input-text').focus();
+            });
+        }
+
+        const quickTermBtn = document.getElementById('quick-tab-terminal');
+        if (quickTermBtn) {
+            quickTermBtn.addEventListener('click', () => {
+                switchConsoleTab('terminal');
+            });
+        }
+
+        // Expand / Collapse Console
+        const consoleElem = document.getElementById('ide-console');
+        const toggleExpandBtn = document.getElementById('btn-toggle-expand');
+        if (toggleExpandBtn) {
+            toggleExpandBtn.addEventListener('click', () => {
+                consoleElem.classList.toggle('expanded');
+                setTimeout(() => monacoInstance && monacoInstance.layout(), 260);
+            });
+        }
+
+        // Clear Console Button
+        const clearConsoleBtn = document.getElementById('btn-clear-console');
+        if (clearConsoleBtn) {
+            clearConsoleBtn.addEventListener('click', () => {
+                const termScreen = document.getElementById('terminal-screen');
+                termScreen.innerHTML = `
+                    <div class="term-line term-dim">// Code Playground Cloud Sandbox &bull; Cleared</div>
+                    <div class="term-line term-prompt"><span class="term-caret">$</span> ready</div>
+                `;
+                document.getElementById('exec-status-badge').innerHTML = '';
+                document.getElementById('testcases-empty-state').style.display = 'flex';
+                document.getElementById('testcases-content-area').style.display = 'none';
+                document.getElementById('tc-count-pill').style.display = 'none';
+            });
+        }
+
+        // Load Sample Input Button
+        const loadSampleBtn = document.getElementById('btn-load-sample-input');
+        if (loadSampleBtn) {
+            loadSampleBtn.addEventListener('click', () => {
+                const inputArea = document.getElementById('custom-input-text');
+                inputArea.value = SAMPLE_INPUT;
+                inputArea.focus();
+                window.showToast('Sample input loaded into stdin!', 'info');
+            });
+        }
+
+        // Copy Test Case Input
+        window.copyTcInput = function() {
+            const val = document.getElementById('tc-input-box').textContent;
+            navigator.clipboard.writeText(val).then(() => {
+                window.showToast('Input copied to clipboard!', 'info');
+            });
+        };
+
+        // Status Badge Helper
+        function setExecStatus(type, text) {
+            const badge = document.getElementById('exec-status-badge');
+            if (!badge) return;
+            if (type === 'running') {
+                badge.innerHTML = `<span class="badge" style="background:#dbeafe; color:#2563eb;"><i class="fas fa-spinner fa-spin"></i> ${text || 'Running...'}</span>`;
+            } else if (type === 'testing') {
+                badge.innerHTML = `<span class="badge" style="background:#fef3c7; color:#d97706;"><i class="fas fa-spinner fa-spin"></i> ${text || 'Testing...'}</span>`;
+            } else if (type === 'evaluating') {
+                badge.innerHTML = `<span class="badge" style="background:#e0e7ff; color:#4338ca;"><i class="fas fa-spinner fa-spin"></i> ${text || 'Evaluating...'}</span>`;
+            } else if (type === 'success') {
+                badge.innerHTML = `<span class="badge badge-easy"><i class="fas fa-check"></i> ${text || 'Success'}</span>`;
+            } else if (type === 'accepted') {
+                badge.innerHTML = `<span class="badge badge-easy"><i class="fas fa-trophy"></i> ${text || 'Accepted 🏆'}</span>`;
+            } else if (type === 'failed') {
+                badge.innerHTML = `<span class="badge badge-hard"><i class="fas fa-xmark"></i> ${text || 'Failed'}</span>`;
+            } else if (type === 'error') {
+                badge.innerHTML = `<span class="badge badge-hard"><i class="fas fa-triangle-exclamation"></i> ${text || 'Error'}</span>`;
+            } else {
+                badge.innerHTML = '';
+            }
+        }
+
+        // Terminal Output Logger
+        function logToTerminal(lines, clearFirst = true) {
+            const termScreen = document.getElementById('terminal-screen');
+            if (clearFirst) {
+                termScreen.innerHTML = '';
+            }
+
+            lines.forEach(item => {
+                const lineDiv = document.createElement('div');
+                lineDiv.className = `term-line ${item.type ? 'term-' + item.type : ''}`;
+                lineDiv.textContent = item.text;
+                termScreen.appendChild(lineDiv);
+            });
+
+            termScreen.scrollTop = termScreen.scrollHeight;
+        }
+
+        // Test Cases Visual Renderer
+        function renderTestCaseResults(results, overallStatus) {
+            currentTestResults = results || [];
+            activeTcIndex = 0;
+
+            const emptyState = document.getElementById('testcases-empty-state');
+            const contentArea = document.getElementById('testcases-content-area');
+            const countPill = document.getElementById('tc-count-pill');
+            const summaryBanner = document.getElementById('testcases-summary-banner');
+            const summaryStatus = document.getElementById('summary-status-text');
+            const summaryStats = document.getElementById('summary-stats-text');
+            const selectorBar = document.getElementById('tc-selector-bar');
+
+            emptyState.style.display = 'none';
+            contentArea.style.display = 'block';
+
+            const passedCount = currentTestResults.filter(r => r.passed).length;
+            const totalCount = currentTestResults.length;
+            const isAllPassed = passedCount === totalCount && totalCount > 0;
+
+            countPill.style.display = 'inline-block';
+            countPill.className = `ide-tab-pill ${isAllPassed ? 'passed' : 'failed'}`;
+            countPill.textContent = `${passedCount}/${totalCount}`;
+
+            if (isAllPassed) {
+                summaryBanner.className = 'ide-summary-banner banner-success';
+                summaryStatus.innerHTML = '<i class="fas fa-circle-check"></i> Accepted';
+                summaryStats.textContent = `All ${totalCount} test cases passed successfully!`;
+            } else {
+                summaryBanner.className = 'ide-summary-banner banner-error';
+                summaryStatus.innerHTML = '<i class="fas fa-circle-xmark"></i> Wrong Answer';
+                summaryStats.textContent = `Passed ${passedCount} of ${totalCount} test cases. Review failures below.`;
+            }
+
+            // Build case selector pills
+            selectorBar.innerHTML = '';
+            currentTestResults.forEach((tc, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `tc-pill ${tc.passed ? 'passed' : 'failed'} ${idx === 0 ? 'active' : ''}`;
+                btn.innerHTML = `Case ${idx + 1} <i class="fas ${tc.passed ? 'fa-check' : 'fa-xmark'}"></i>`;
+                btn.addEventListener('click', () => selectTestCase(idx));
+                selectorBar.appendChild(btn);
+            });
+
+            displayTestCaseDetail(0);
+        }
+
+        function selectTestCase(idx) {
+            activeTcIndex = idx;
+            const pills = document.querySelectorAll('.tc-pill');
+            pills.forEach((p, i) => {
+                if (i === idx) p.classList.add('active');
+                else p.classList.remove('active');
+            });
+            displayTestCaseDetail(idx);
+        }
+
+        function displayTestCaseDetail(idx) {
+            if (!currentTestResults[idx]) return;
+            const tc = currentTestResults[idx];
+
+            const inputBox = document.getElementById('tc-input-box');
+            const expectedBox = document.getElementById('tc-expected-box');
+            const actualBox = document.getElementById('tc-actual-box');
+            const matchTag = document.getElementById('tc-match-tag');
+            const errorCard = document.getElementById('tc-error-card');
+            const errorBox = document.getElementById('tc-error-box');
+
+            inputBox.textContent = tc.input || '(empty stdin)';
+            expectedBox.textContent = tc.expectedOutput || '(empty)';
+            actualBox.textContent = tc.actualOutput || (tc.error ? '' : '(empty)');
+
+            if (tc.passed) {
+                actualBox.className = 'ide-io-box ide-actual-box match';
+                matchTag.className = 'ide-match-tag match';
+                matchTag.textContent = 'Matched Expected ✓';
+            } else {
+                actualBox.className = 'ide-io-box ide-actual-box mismatch';
+                matchTag.className = 'ide-match-tag mismatch';
+                matchTag.textContent = 'Mismatch ✗';
+            }
+
+            if (tc.error) {
+                errorCard.style.display = 'block';
+                errorBox.textContent = tc.error;
+            } else {
+                errorCard.style.display = 'none';
+            }
+        }
+
+        // ==========================================
+        // ACTION BUTTONS WITH AUTH GATING
+        // ==========================================
 
         // 1. Run Code
         document.getElementById('btn-run').addEventListener('click', async () => {
+            if (!window.requireAuth('Please sign in to execute code in the cloud sandbox.')) {
+                return;
+            }
             if (!monacoInstance) return;
+
             const code = monacoInstance.getValue().trim();
             const language = document.getElementById('language-select').value;
-            const customInput = document.getElementById('custom-input').value;
+            const customInput = document.getElementById('custom-input-text').value;
 
             if (!code) {
-                alert('Please enter code first.');
+                window.showToast('Please enter some code before running.', 'warning');
                 return;
             }
 
-            outputBox.textContent = 'Executing code in cloud sandbox...';
-            badge.innerHTML = '<span class="badge" style="background:#dbeafe; color:#2563eb;">Running...</span>';
+            switchConsoleTab('terminal');
+            setExecStatus('running', 'Running...');
+            document.getElementById('term-lang-tag').textContent = language.toUpperCase();
+
+            logToTerminal([
+                { text: `// Cloud Sandbox Initialized [${language.toUpperCase()}]`, type: 'dim' },
+                { text: `$ executing code with custom standard input...`, type: 'prompt' }
+            ], true);
 
             try {
                 const res = await fetch('/api/execute', {
@@ -465,27 +1290,46 @@
 
                 const data = await res.json();
                 if (data.status === 'success') {
-                    badge.innerHTML = '<span class="badge badge-easy">Success</span>';
-                    outputBox.textContent = data.output || '(Execution finished with no standard output)';
+                    setExecStatus('success', 'Executed');
+                    const output = data.output || '(Program exited successfully with status 0 and no output)';
+                    logToTerminal([
+                        { text: `// Execution Finished (Status: 0)`, type: 'success' },
+                        { text: output, type: 'normal' }
+                    ], false);
                 } else {
-                    badge.innerHTML = '<span class="badge badge-hard">Error</span>';
-                    outputBox.textContent = data.error || 'Execution encountered an error';
+                    setExecStatus('error', 'Runtime / Compilation Error');
+                    logToTerminal([
+                        { text: `// Execution Failed`, type: 'error' },
+                        { text: data.error || data.output || 'Execution encountered an error.', type: 'error' }
+                    ], false);
                 }
             } catch (err) {
-                badge.innerHTML = '<span class="badge badge-hard">Network Error</span>';
-                outputBox.textContent = 'Server error running code: ' + err.message;
+                setExecStatus('error', 'Network Error');
+                logToTerminal([
+                    { text: `// Network Request Failed`, type: 'error' },
+                    { text: err.message, type: 'error' }
+                ], false);
             }
         });
 
         // 2. Test All Cases
         document.getElementById('btn-test').addEventListener('click', async () => {
+            if (!window.requireAuth('Please sign in to test your code against test cases.')) {
+                return;
+            }
             if (!monacoInstance) return;
+
             const code = monacoInstance.getValue().trim();
             const language = document.getElementById('language-select').value;
             const userId = localStorage.getItem('userId');
 
-            outputBox.textContent = 'Running tests against test cases...';
-            badge.innerHTML = '<span class="badge" style="background:#fef3c7; color:#d97706;">Testing...</span>';
+            if (!code) {
+                window.showToast('Please enter some code before testing.', 'warning');
+                return;
+            }
+
+            switchConsoleTab('testcases');
+            setExecStatus('testing', 'Testing Suite...');
 
             try {
                 // Fetch problem's test cases
@@ -509,42 +1353,39 @@
                 });
 
                 const data = await res.json();
+                renderTestCaseResults(data.results || [], data.status);
+
                 if (data.status === 'Accepted') {
-                    badge.innerHTML = '<span class="badge badge-easy">All Tests Passed</span>';
+                    setExecStatus('accepted', 'All Tests Passed');
+                    window.showToast('All test cases passed successfully!', 'success');
                 } else {
-                    badge.innerHTML = '<span class="badge badge-hard">Tests Failed</span>';
+                    setExecStatus('failed', 'Tests Failed');
+                    window.showToast('One or more test cases failed.', 'warning');
                 }
-
-                let summary = `Status: ${data.status}\n\n`;
-                (data.results || []).forEach((tc, idx) => {
-                    summary += `Test Case #${idx + 1}: ${tc.passed ? 'PASSED ✓' : 'FAILED ✗'}\n`;
-                    summary += `  Input:    ${tc.input || '(empty)'}\n`;
-                    summary += `  Expected: ${tc.expectedOutput}\n`;
-                    summary += `  Actual:   ${tc.actualOutput || (tc.error ? 'Error: ' + tc.error : '(empty)')}\n\n`;
-                });
-
-                outputBox.textContent = summary;
             } catch (err) {
-                badge.innerHTML = '<span class="badge badge-hard">Error</span>';
-                outputBox.textContent = 'Error testing code: ' + err.message;
+                setExecStatus('error', 'Test Error');
+                window.showToast('Error testing code: ' + err.message, 'error');
             }
         });
 
         // 3. Submit Solution
         document.getElementById('btn-submit').addEventListener('click', async () => {
-            if (!monacoInstance) return;
-            const userId = localStorage.getItem('userId');
-            if (!userId) {
-                alert('Please sign in to submit your solution and record your score.');
-                window.location.href = '/signin';
+            if (!window.requireAuth('Please sign in to submit your solution and record your score.')) {
                 return;
             }
+            if (!monacoInstance) return;
 
+            const userId = localStorage.getItem('userId');
             const code = monacoInstance.getValue().trim();
             const language = document.getElementById('language-select').value;
 
-            outputBox.textContent = 'Submitting solution to evaluator...';
-            badge.innerHTML = '<span class="badge" style="background:#e0e7ff; color:#4338ca;">Evaluating...</span>';
+            if (!code) {
+                window.showToast('Please enter some code before submitting.', 'warning');
+                return;
+            }
+
+            switchConsoleTab('testcases');
+            setExecStatus('evaluating', 'Grading Submission...');
 
             try {
                 const res = await fetch(`/api/problems/${problemId}/submit`, {
@@ -554,19 +1395,23 @@
                 });
 
                 const data = await res.json();
+                if (data.results && data.results.length > 0) {
+                    renderTestCaseResults(data.results, data.status);
+                }
+
                 if (data.status === 'Accepted') {
-                    badge.innerHTML = '<span class="badge badge-easy">Accepted 🏆</span>';
-                    outputBox.textContent = '🎉 ACCEPTED! All test cases passed successfully!\n\nYour solution has been recorded in your profile.';
+                    setExecStatus('accepted', 'Accepted 🏆');
+                    window.showToast('🎉 ACCEPTED! Solution verified and score recorded.', 'success');
                     if (data.contestUpdate && data.contestUpdate.updated) {
-                        outputBox.textContent += `\nContest Leaderboard updated! Current Score: ${data.contestUpdate.totalScore}`;
+                        window.showToast(`Leaderboard updated! Total Score: ${data.contestUpdate.totalScore}`, 'success');
                     }
                 } else {
-                    badge.innerHTML = '<span class="badge badge-hard">Wrong Answer</span>';
-                    outputBox.textContent = 'One or more test cases failed. Review test cases and try again.\n\n' + (data.message || '');
+                    setExecStatus('failed', 'Wrong Answer');
+                    window.showToast('One or more test cases failed. Keep trying!', 'error');
                 }
             } catch (err) {
-                badge.innerHTML = '<span class="badge badge-hard">Error</span>';
-                outputBox.textContent = 'Submission error: ' + err.message;
+                setExecStatus('error', 'Submission Error');
+                window.showToast('Submission error: ' + err.message, 'error');
             }
         });
 

@@ -325,12 +325,10 @@
         }
 
         async function handleContestRegistration(contestId) {
-            const userId = localStorage.getItem('userId');
-            if (!userId) {
-                alert('Please sign in first to participate in contests.');
-                window.location.href = '/signin';
+            if (!window.requireAuth('Please sign in first to participate in contests.')) {
                 return;
             }
+            const userId = localStorage.getItem('userId');
 
             try {
                 const response = await fetch(`/api/contests/join/${contestId}`, {
@@ -343,11 +341,11 @@
                 if (response.ok && result.success) {
                     window.location.href = `/contestpage/${contestId}`;
                 } else {
-                    alert(result.message || 'Error registering for contest');
+                    window.showToast(result.message || 'Error registering for contest', 'error');
                 }
             } catch (err) {
                 console.error('Registration failed:', err);
-                alert('Failed to register. Please try again.');
+                window.showToast('Failed to register. Please try again.', 'error');
             }
         }
 
@@ -374,6 +372,9 @@
         // Join contest by code handler
         document.getElementById('join-contest-form').addEventListener('submit', async (e) => {
             e.preventDefault();
+            if (!window.requireAuth('Please sign in to join contests.')) {
+                return;
+            }
             const contestCode = document.getElementById('contest-code').value.trim();
             const userId = localStorage.getItem('userId');
 
@@ -390,11 +391,11 @@
                 if (res.ok && data.contestId) {
                     window.location.href = `/contestpage/${data.contestId}`;
                 } else {
-                    alert(data.msg || 'Contest not found with code: ' + contestCode);
+                    window.showToast(data.msg || 'Contest not found with code: ' + contestCode, 'error');
                 }
             } catch (err) {
                 console.error('Join contest error:', err);
-                alert('Could not join contest. Please check the code.');
+                window.showToast('Could not join contest. Please check the code.', 'error');
             }
         });
 

@@ -142,7 +142,7 @@
             </form>
 
             <div class="auth-footer">
-                Already have an account? <a href="/signin">Sign in here</a>
+                Already have an account? <a href="/signin" id="signin-link">Sign in here</a>
             </div>
         </div>
     </main>
@@ -154,6 +154,14 @@
         const form = document.getElementById('signup-form');
         const alertBox = document.getElementById('auth-alert');
         const submitBtn = document.getElementById('submit-btn');
+
+        // Preserve redirect link in signin href
+        const initialParams = new URLSearchParams(window.location.search);
+        const redirectParam = initialParams.get('redirect');
+        if (redirectParam) {
+            const signinLink = document.getElementById('signin-link');
+            if (signinLink) signinLink.href = `/signin?redirect=${encodeURIComponent(redirectParam)}`;
+        }
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -190,7 +198,13 @@
                     if (data.role) localStorage.setItem('role', data.role);
                     if (data.token) localStorage.setItem('token', data.token);
 
-                    window.location.href = '/explore';
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirect = urlParams.get('redirect');
+                    if (redirect && redirect.startsWith('/')) {
+                        window.location.href = decodeURIComponent(redirect);
+                    } else {
+                        window.location.href = '/explore';
+                    }
                 } else {
                     alertBox.textContent = data.message || 'Error creating account. Please try again.';
                     alertBox.style.display = 'block';

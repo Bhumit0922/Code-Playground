@@ -283,11 +283,12 @@
                     if (res.ok && data.profilePicture) {
                         document.getElementById('user-avatar-img').src = data.profilePicture;
                         localStorage.setItem('profilePicture', data.profilePicture);
+                        window.showToast('Profile photo updated successfully!', 'success');
                     } else {
-                        alert(data.message || 'Error uploading photo');
+                        window.showToast(data.message || 'Error uploading photo', 'error');
                     }
                 } catch (err) {
-                    alert('Error uploading profile image');
+                    window.showToast('Error uploading profile image', 'error');
                 }
             });
 
@@ -296,6 +297,7 @@
                 localStorage.removeItem('userId');
                 localStorage.removeItem('username');
                 localStorage.removeItem('userEmail');
+                localStorage.removeItem('role');
                 localStorage.removeItem('token');
                 localStorage.removeItem('profilePicture');
                 window.location.href = '/signin';

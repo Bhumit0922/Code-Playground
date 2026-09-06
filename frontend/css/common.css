@@ -564,3 +564,179 @@ body {
     text-align: center;
   }
 }
+
+/* ============================================================
+   GLOBAL AUTH REQUIRED MODAL & TOAST NOTIFICATION SYSTEM
+   ============================================================ */
+.cp-auth-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s ease;
+}
+
+.cp-auth-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.cp-auth-modal {
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 30px rgba(99, 102, 241, 0.2);
+  width: 100%;
+  max-width: 440px;
+  padding: 2.25rem 2rem;
+  text-align: center;
+  position: relative;
+  transform: scale(0.95);
+  transition: all 0.25s ease;
+  color: #f8fafc;
+}
+
+.cp-auth-overlay.show .cp-auth-modal {
+  transform: scale(1);
+}
+
+.cp-auth-modal-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.25rem;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(6, 182, 212, 0.2));
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  color: #818cf8;
+}
+
+.cp-auth-modal h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
+}
+
+.cp-auth-modal p {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 1.75rem;
+}
+
+.cp-auth-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cp-auth-btn-login {
+  background: linear-gradient(135deg, #6366f1, #3b82f6);
+  color: #ffffff;
+  padding: 0.85rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+  transition: var(--transition);
+  display: block;
+}
+
+.cp-auth-btn-login:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+  color: #ffffff;
+}
+
+.cp-auth-btn-signup {
+  background: rgba(255, 255, 255, 0.06);
+  color: #f8fafc;
+  padding: 0.85rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  transition: var(--transition);
+  display: block;
+}
+
+.cp-auth-btn-signup:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.cp-auth-btn-cancel {
+  background: transparent;
+  color: #64748b;
+  border: none;
+  padding: 0.5rem;
+  font-size: 0.88rem;
+  cursor: pointer;
+  margin-top: 0.25rem;
+  transition: var(--transition);
+}
+
+.cp-auth-btn-cancel:hover {
+  color: #94a3b8;
+}
+
+/* Toast Notifications */
+.cp-toast-container {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 100000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  pointer-events: none;
+}
+
+.cp-toast {
+  pointer-events: auto;
+  min-width: 280px;
+  max-width: 420px;
+  background: #1e293b;
+  color: #f8fafc;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.9rem 1.25rem;
+  border-radius: var(--radius);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  animation: slideInToast 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s ease;
+}
+
+.cp-toast.toast-success { border-left: 4px solid #10b981; }
+.cp-toast.toast-error { border-left: 4px solid #ef4444; }
+.cp-toast.toast-warning { border-left: 4px solid #f59e0b; }
+.cp-toast.toast-info { border-left: 4px solid #3b82f6; }
+
+@keyframes slideInToast {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}

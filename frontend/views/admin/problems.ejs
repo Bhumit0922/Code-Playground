@@ -126,8 +126,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             const role = localStorage.getItem('role');
             if (role !== 'admin') {
-                alert('Access Restricted: You must be logged in as an Administrator.');
-                window.location.href = '/signin';
+                window.showToast('Access Restricted: Administrator login required.', 'error');
+                setTimeout(() => { window.location.href = '/signin?redirect=/admin/problems'; }, 1000);
             }
 
             // Live search and filter
@@ -179,15 +179,15 @@
                 const data = await res.json();
 
                 if (res.ok && data.success) {
-                    alert('Problem deleted successfully.');
+                    window.showToast('Problem deleted successfully.', 'success');
                     const row = document.querySelector(`tr[data-id="${id}"]`);
                     if (row) row.remove();
                 } else {
-                    alert(data.message || 'Failed to delete problem.');
+                    window.showToast(data.message || 'Failed to delete problem.', 'error');
                 }
             } catch (err) {
                 console.error(err);
-                alert('Server error deleting problem.');
+                window.showToast('Server error deleting problem.', 'error');
             }
         }
     </script>

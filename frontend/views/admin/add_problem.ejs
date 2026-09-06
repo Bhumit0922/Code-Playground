@@ -222,8 +222,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             const role = localStorage.getItem('role');
             if (role !== 'admin') {
-                alert('Access Restricted: You must be logged in as an Administrator.');
-                window.location.href = '/signin';
+                window.showToast('Access Restricted: Administrator login required.', 'error');
+                setTimeout(() => { window.location.href = '/signin?redirect=/admin/add-problem'; }, 1000);
                 return;
             }
 
@@ -314,7 +314,7 @@
                 }
 
                 if (finalTestCases.length === 0) {
-                    alert('Please provide at least one test case.');
+                    window.showToast('Please provide at least one test case.', 'warning');
                     return;
                 }
 
@@ -348,16 +348,18 @@
 
                     const data = await res.json();
                     if (res.ok) {
-                        alert(isEdit ? 'Problem updated successfully!' : 'Problem created and published successfully!');
-                        window.location.href = '/admin/problems';
+                        window.showToast(isEdit ? 'Problem updated successfully!' : 'Problem created and published successfully!', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/admin/problems';
+                        }, 800);
                     } else {
-                        alert(data.message || 'Failed to save problem.');
+                        window.showToast(data.message || 'Failed to save problem.', 'error');
                         submitBtn.disabled = false;
                         submitBtn.innerHTML = isEdit ? 'Update Problem' : 'Publish Problem';
                     }
                 } catch (err) {
                     console.error(err);
-                    alert('Server error while saving problem.');
+                    window.showToast('Server error while saving problem.', 'error');
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = isEdit ? 'Update Problem' : 'Publish Problem';
                 }

@@ -112,8 +112,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             const role = localStorage.getItem('role');
             if (role !== 'admin') {
-                alert('Access Restricted: You must be logged in as an Administrator.');
-                window.location.href = '/signin';
+                window.showToast('Access Restricted: Administrator login required.', 'error');
+                setTimeout(() => { window.location.href = '/signin?redirect=/admin/users'; }, 1000);
             }
 
             // Search filter
@@ -154,14 +154,14 @@
 
                 const data = await res.json();
                 if (res.ok && data.success) {
-                    alert(data.message || 'Role updated successfully.');
-                    window.location.reload();
+                    window.showToast(data.message || 'Role updated successfully.', 'success');
+                    setTimeout(() => window.location.reload(), 1000);
                 } else {
-                    alert(data.message || 'Failed to update role.');
+                    window.showToast(data.message || 'Failed to update role.', 'error');
                 }
             } catch (err) {
                 console.error(err);
-                alert('Server error updating user role.');
+                window.showToast('Server error updating user role.', 'error');
             }
         }
 
@@ -170,7 +170,7 @@
             const username = btn.dataset.username;
             const currentUserId = localStorage.getItem('userId');
             if (userId === currentUserId) {
-                alert('You cannot delete your own active administrator account.');
+                window.showToast('You cannot delete your own active administrator account.', 'warning');
                 return;
             }
 
@@ -185,15 +185,15 @@
 
                 const data = await res.json();
                 if (res.ok && data.success) {
-                    alert('User deleted successfully.');
+                    window.showToast('User deleted successfully.', 'success');
                     const row = document.querySelector(`tr[data-id="${userId}"]`);
                     if (row) row.remove();
                 } else {
-                    alert(data.message || 'Failed to delete user.');
+                    window.showToast(data.message || 'Failed to delete user.', 'error');
                 }
             } catch (err) {
                 console.error(err);
-                alert('Server error deleting user.');
+                window.showToast('Server error deleting user.', 'error');
             }
         }
     </script>
