@@ -2,8 +2,13 @@
   "version": 2,
   "builds": [
     {
-      "src": "backend/index.js",
-      "use": "@vercel/node"
+      "src": "api/index.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "frontend/**"
+        ]
+      }
     }
   ],
   "routes": [
@@ -21,7 +26,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "backend/index.js"
+      "dest": "/api/index.js"
     }
   ]
 }
