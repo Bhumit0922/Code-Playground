@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { pageTitle: 'Contest Arena' }) %>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .contest-arena {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 1.8fr 1.2fr;
+            gap: 2rem;
+            align-items: start;
+        }
+        .arena-card {
+            background: #ffffff;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            padding: 1.75rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .contest-info-badge-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin: 1rem 0 1.5rem;
+        }
+        .info-pill {
+            background: var(--light-bg);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .info-pill strong {
+            color: var(--dark);
+        }
+        .arena-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            margin-top: 1rem;
+        }
+        .arena-table th {
+            background: #f8fafc;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .arena-table td {
+            padding: 0.95rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.92rem;
+        }
+        .arena-table tr:hover {
+            background: #f8fafc;
+            cursor: pointer;
+        }
+        .problem-solved {
+            background: #f0fdf4 !important;
+        }
+        .problem-solved td:first-child::before {
+            content: "✓ ";
+            color: var(--easy);
+            font-weight: 700;
+        }
+        .user-stat-banner {
+            background: linear-gradient(135deg, var(--primary-light) 0%, #ffffff 100%);
+            border: 1px solid #bfdbfe;
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+        .stat-box h4 {
+            font-size: 1.4rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+        .stat-box p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .btn-end-contest {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-end-contest:hover {
+            background: #dc2626;
+        }
+        @media (max-width: 960px) {
+            .contest-arena {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <%- include('partials/navbar', { activePage: 'contests' }) %>
+
+    <main>
+        <div class="contest-arena">
+            <!-- Left Panel: Problems -->
+            <div class="arena-card">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+                    <div>
+                        <h1 id="contest-title" style="font-size: 1.6rem; color: var(--dark);">Contest Problems</h1>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;" id="contest-desc">Solve problems to earn points and climb the rankings.</p>
+                    </div>
+                    <div id="end-contest-container" style="display:none;">
+                        <button id="end-contest-btn" class="btn-end-contest">End Contest Now</button>
+                    </div>
+                </div>
+
+                <div class="contest-info-badge-bar">
+                    <span class="info-pill">Status: <strong id="contest-status">Loading...</strong></span>
+                    <span class="info-pill">Start: <strong id="start-time">-</strong></span>
+                    <span class="info-pill">End: <strong id="end-time">-</strong></span>
+                </div>
+
+                <div class="user-stat-banner" id="user-stats-banner" style="display:none;">
+                    <div class="stat-box">
+                        <h4 id="user-score">0</h4>
+                        <p>Total Score</p>
+                    </div>
+                    <div class="stat-box">
+                        <h4 id="problems-solved">0</h4>
+                        <p>Problems Solved</p>
+                    </div>
+                    <div class="stat-box">
+                        <h4 id="user-rank">-</h4>
+                        <p>Current Rank</p>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="arena-table" aria-label="Contest problems">
+                        <thead>
+                            <tr>
+                                <th>Problem Name</th>
+                                <th>Difficulty</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="problems-body">
+                            <tr>
+                                <td colspan="3" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                                    <i class="fas fa-spinner fa-spin"></i> Loading problems...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Right Panel: Live Leaderboard & Chart -->
+            <div class="arena-card">
+                <h2 style="font-size: 1.3rem; margin-bottom: 1rem; color: var(--dark); display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-medal" style="color: #f59e0b;"></i> Live Leaderboard
+                </h2>
+
+                <div class="table-responsive">
+                    <table class="arena-table" id="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Coder</th>
+                                <th>Score</th>
+                                <th>Solved</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body">
+                            <tr>
+                                <td colspan="4" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">
+                                    No submissions yet. Be the first to solve!
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <h3 style="font-size: 1rem; color: var(--text-muted); margin-bottom: 0.75rem;">Score Distribution</h3>
+                    <canvas id="ratingsChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <%- include('partials/footer') %>
+
+    <script>
+        const contestId = window.location.pathname.split('/').pop();
+        let chartInstance = null;
+
+        async function fetchContestDetails() {
+            try {
+                const userId = localStorage.getItem('userId');
+                let url = `/api/contests/${contestId}`;
+                if (userId) url += `?userId=${userId}`;
+
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Contest fetch failed');
+                
+                const contest = await response.json();
+
+                document.getElementById('contest-title').textContent = contest.name;
+                if (contest.description) document.getElementById('contest-desc').textContent = contest.description;
+                document.getElementById('start-time').textContent = new Date(contest.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('end-time').textContent = new Date(contest.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('contest-status').textContent = contest.status;
+
+                // Show end contest button if user is creator or admin
+                if (userId && (userId === contest.createdBy || localStorage.getItem('role') === 'admin') && contest.status !== 'Completed') {
+                    document.getElementById('end-contest-container').style.display = 'block';
+                }
+
+                // Render user stats if available
+                if (contest.userStats) {
+                    document.getElementById('user-stats-banner').style.display = 'flex';
+                    document.getElementById('user-score').textContent = contest.userStats.totalScore || 0;
+                    document.getElementById('problems-solved').textContent = contest.userStats.problemsCount || 0;
+                    document.getElementById('user-rank').textContent = contest.userStats.rank > 0 ? `#${contest.userStats.rank}` : 'Unranked';
+                }
+
+                // Render problems
+                renderProblems(contest.problems || []);
+
+                // Render leaderboard
+                renderLeaderboard(contest.leaderboard || []);
+
+            } catch (err) {
+                console.error("Error loading contest details:", err);
+            }
+        }
+
+        function renderProblems(problems) {
+            const body = document.getElementById('problems-body');
+            if (problems.length === 0) {
+                body.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:1.5rem;">No problems added to this contest yet.</td></tr>';
+                return;
+            }
+
+            body.innerHTML = problems.map(p => {
+                const diffLower = (p.difficulty || 'medium').toLowerCase();
+                const isSolved = p.solved;
+
+                return `
+                    <tr class="${isSolved ? 'problem-solved' : ''}" onclick="window.location.href='/editcode/${p._id}?contestId=${contestId}'">
+                        <td style="font-weight: 600;">${p.title}</td>
+                        <td><span class="badge badge-${diffLower}">${p.difficulty}</span></td>
+                        <td>
+                            <a href="/editcode/${p._id}?contestId=${contestId}" class="btn" style="background:var(--primary); color:white; padding:0.35rem 0.8rem; border-radius:4px; font-size:0.8rem; text-decoration:none;">
+                                ${isSolved ? 'Solve Again' : 'Solve'}
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderLeaderboard(leaderboard) {
+            const body = document.getElementById('leaderboard-body');
+            if (!leaderboard || leaderboard.length === 0) {
+                body.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:1.5rem; color:var(--text-muted);">No submissions recorded yet.</td></tr>';
+                return;
+            }
+
+            body.innerHTML = leaderboard.slice(0, 10).map((entry, index) => {
+                const rankBadge = index === 0 ? '🥇 1' : index === 1 ? '🥈 2' : index === 2 ? '🥉 3' : (index + 1);
+                return `
+                    <tr>
+                        <td style="font-weight: 700;">${rankBadge}</td>
+                        <td style="font-weight: 500;">${entry.username}</td>
+                        <td style="color: var(--primary); font-weight: 700;">${entry.totalScore}</td>
+                        <td>${entry.problemsCount || 0}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            updateChart(leaderboard);
+        }
+
+        function updateChart(leaderboard) {
+            const ctx = document.getElementById('ratingsChart');
+            if (!ctx) return;
+
+            const labels = leaderboard.slice(0, 5).map(e => e.username);
+            const scores = leaderboard.slice(0, 5).map(e => e.totalScore);
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels.length > 0 ? labels : ['No Data'],
+                    datasets: [{
+                        label: 'Points',
+                        data: scores.length > 0 ? scores : [0],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        // Handle End Contest click
+        document.getElementById('end-contest-btn').addEventListener('click', async () => {
+            if (!confirm('Are you sure you want to end this contest and finalize rankings?')) return;
+            try {
+                const res = await fetch(`/api/contests/contest/${contestId}/end`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert('Contest ended successfully!');
+                    window.location.href = `/contest/${contestId}/leaderboard`;
+                } else {
+                    alert(data.message || 'Error ending contest');
+                }
+            } catch (err) {
+                console.error('End contest error:', err);
+                alert('Failed to end contest');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', fetchContestDetails);
+    </script>
+</body>
+</html>

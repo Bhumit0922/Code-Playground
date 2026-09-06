@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { pageTitle: 'Discussion Forum' }) %>
+    <link rel="stylesheet" href="/css/discuss.css">
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .modal.show {
+            display: flex;
+        }
+        .modal-content {
+            background: #ffffff;
+            border-radius: var(--radius);
+            max-width: 650px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1.25rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            border: none;
+            background: transparent;
+        }
+        .discussion-thread-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        .discussion-thread-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <%- include('partials/navbar', { activePage: 'discuss' }) %>
+
+    <!-- Discussion Section -->
+    <div class="discussion-container" style="max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem;">
+        <div class="discussion-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+            <div>
+                <h1 style="font-size: 1.8rem; color: var(--dark);">Community Forum</h1>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Ask questions, discuss problem approaches, and share coding insights.</p>
+            </div>
+            <div class="discussion-actions" style="display: flex; gap: 0.75rem; align-items: center;">
+                <select id="tag-filter" class="form-control" style="padding: 0.6rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                    <option value="">All Topics & Tags</option>
+                </select>
+                <button id="create-discussion-btn" class="btn" style="background: var(--primary); color: white; border: none; padding: 0.65rem 1.25rem; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer;">
+                    <i class="fas fa-plus"></i> New Discussion
+                </button>
+            </div>
+        </div>
+
+        <div class="search-bar" style="margin-bottom: 2rem; display: flex; gap: 0.5rem;">
+            <input type="text" id="search-input" placeholder="Search discussions by topic or keyword..." style="flex: 1; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); outline: none;">
+            <button id="search-btn" class="btn" style="background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: var(--radius-sm); cursor: pointer;"><i class="fas fa-search"></i></button>
+        </div>
+
+        <!-- Discussion Threads -->
+        <div id="discussions-list">
+            <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                <i class="fas fa-spinner fa-spin"></i> Loading discussions...
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;"></div>
+    </div>
+
+    <!-- Create Discussion Modal -->
+    <div id="create-discussion-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" id="close-create-modal">&times;</button>
+            <h2 style="margin-bottom: 1.25rem; color: var(--dark);">Create New Discussion</h2>
+            <form id="discussion-form" style="display: flex; flex-direction: column; gap: 1rem;">
+                <div>
+                    <label style="font-weight: 500; font-size: 0.9rem; display: block; margin-bottom: 0.3rem;">Title *</label>
+                    <input type="text" id="discussion-title" required placeholder="What is your question or topic?" style="width: 100%; padding: 0.7rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm);">
+                </div>
+                <div>
+                    <label style="font-weight: 500; font-size: 0.9rem; display: block; margin-bottom: 0.3rem;">Content *</label>
+                    <textarea id="discussion-content" rows="6" required placeholder="Explain your doubt, approach, or solution in detail..." style="width: 100%; padding: 0.7rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-family: inherit;"></textarea>
+                </div>
+                <div>
+                    <label style="font-weight: 500; font-size: 0.9rem; display: block; margin-bottom: 0.3rem;">Tags (comma separated)</label>
+                    <input type="text" id="discussion-tags" placeholder="e.g. Dynamic Programming, Trees, C++" style="width: 100%; padding: 0.7rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm);">
+                </div>
+                <button type="submit" class="btn" style="background: var(--primary); color: white; border: none; padding: 0.75rem; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; margin-top: 0.5rem;">
+                    Post Discussion
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Discussion Modal -->
+    <div id="view-discussion-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" id="close-view-modal">&times;</button>
+            <div id="discussion-details"></div>
+            
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1.5rem 0;">
+            
+            <h4 style="margin-bottom: 1rem; color: var(--dark);">Comments & Answers</h4>
+            <div id="comments-container" style="max-height: 250px; overflow-y: auto; margin-bottom: 1rem;"></div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <textarea id="comment-input" rows="3" placeholder="Write your response or solution..." style="width: 100%; padding: 0.6rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-family: inherit;"></textarea>
+                <button id="submit-comment" class="btn" style="background: var(--primary); color: white; border: none; padding: 0.6rem 1.25rem; border-radius: var(--radius-sm); align-self: flex-end; font-weight: 600; cursor: pointer;">
+                    Post Reply
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <%- include('partials/footer') %>
+
+    <script>
+        let currentDiscussionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const createModal = document.getElementById('create-discussion-modal');
+            const viewModal = document.getElementById('view-discussion-modal');
+            const openCreateBtn = document.getElementById('create-discussion-btn');
+            const closeCreateBtn = document.getElementById('close-create-modal');
+            const closeViewBtn = document.getElementById('close-view-modal');
+
+            openCreateBtn.addEventListener('click', () => {
+                const userId = localStorage.getItem('userId');
+                if (!userId) {
+                    alert('Please sign in to start a discussion.');
+                    window.location.href = '/signin';
+                    return;
+                }
+                createModal.classList.add('show');
+            });
+
+            closeCreateBtn.addEventListener('click', () => createModal.classList.remove('show'));
+            closeViewBtn.addEventListener('click', () => viewModal.classList.remove('show'));
+
+            // Load discussions from API
+            fetchDiscussions();
+            fetchPopularTags();
+
+            async function fetchDiscussions(page = 1) {
+                const tag = document.getElementById('tag-filter').value;
+                const search = document.getElementById('search-input').value.trim();
+
+                const params = new URLSearchParams({ page, limit: 10 });
+                if (tag) params.append('tag', tag);
+                if (search) params.append('search', search);
+
+                try {
+                    const res = await fetch(`/api/discuss?${params.toString()}`);
+                    const data = await res.json();
+                    renderDiscussions(data.discussions || []);
+                } catch (err) {
+                    console.error('Fetch discussions error:', err);
+                }
+            }
+
+            function renderDiscussions(discussions) {
+                const list = document.getElementById('discussions-list');
+                if (discussions.length === 0) {
+                    list.innerHTML = '<div style="text-align:center; padding:3rem; color:var(--text-muted);">No discussions found. Be the first to start one!</div>';
+                    return;
+                }
+
+                list.innerHTML = discussions.map(d => {
+                    const timeAgo = new Date(d.createdAt).toLocaleDateString();
+                    const tags = (d.tags || []).map(t => `<span class="badge" style="background:var(--light-bg); border:1px solid var(--border-color); color:var(--text-muted); font-size:0.75rem; margin-right:0.3rem;">#${t}</span>`).join('');
+                    
+                    return `
+                        <div class="discussion-thread-card" onclick="window.viewDiscussion('${d._id}')">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem;">
+                                <div>
+                                    <h3 style="font-size:1.15rem; color:var(--dark); margin-bottom:0.4rem;">${d.title}</h3>
+                                    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:0.75rem;">${d.content.substring(0, 140)}${d.content.length > 140 ? '...' : ''}</p>
+                                    <div>${tags}</div>
+                                </div>
+                                <div style="display:flex; flex-direction:column; align-items:center; gap:0.2rem; min-width:40px;">
+                                    <span style="font-weight:700; color:var(--primary); font-size:1.1rem;">${d.upvotes || 0}</span>
+                                    <span style="font-size:0.75rem; color:var(--text-muted);">votes</span>
+                                </div>
+                            </div>
+                            <div style="margin-top:0.75rem; font-size:0.8rem; color:var(--text-muted); border-top:1px solid var(--border-color); padding-top:0.5rem; display:flex; justify-content:space-between;">
+                                <span>Posted by <strong>${d.authorName || 'Anonymous'}</strong></span>
+                                <span>${timeAgo} &bull; ${(d.comments || []).length} replies</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            async function fetchPopularTags() {
+                try {
+                    const res = await fetch('/api/discuss/tags/popular');
+                    const tags = await res.json();
+                    const select = document.getElementById('tag-filter');
+                    tags.forEach(t => {
+                        const opt = document.createElement('option');
+                        opt.value = t._id;
+                        opt.textContent = `${t._id} (${t.count})`;
+                        select.appendChild(opt);
+                    });
+                } catch (e) {}
+            }
+
+            document.getElementById('tag-filter').addEventListener('change', () => fetchDiscussions());
+            document.getElementById('search-btn').addEventListener('click', () => fetchDiscussions());
+
+            // Create discussion
+            document.getElementById('discussion-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const userId = localStorage.getItem('userId');
+                const title = document.getElementById('discussion-title').value.trim();
+                const content = document.getElementById('discussion-content').value.trim();
+                const tagsRaw = document.getElementById('discussion-tags').value;
+                const tags = tagsRaw.split(',').map(s => s.trim()).filter(Boolean);
+
+                try {
+                    const res = await fetch('/api/discuss', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ title, content, tags, userId })
+                    });
+
+                    if (res.ok) {
+                        createModal.classList.remove('show');
+                        document.getElementById('discussion-form').reset();
+                        fetchDiscussions();
+                    } else {
+                        alert('Failed to post discussion');
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            });
+
+            // View discussion modal
+            window.viewDiscussion = async function(id) {
+                currentDiscussionId = id;
+                viewModal.classList.add('show');
+                const details = document.getElementById('discussion-details');
+                const comments = document.getElementById('comments-container');
+                details.innerHTML = '<p>Loading details...</p>';
+                comments.innerHTML = '';
+
+                try {
+                    const res = await fetch(`/api/discuss/${id}`);
+                    const d = await res.json();
+
+                    details.innerHTML = `
+                        <h2 style="color:var(--dark); margin-bottom:0.5rem;">${d.title}</h2>
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">By ${d.authorName} &bull; ${new Date(d.createdAt).toLocaleDateString()}</p>
+                        <div style="font-size:0.95rem; line-height:1.6; color:var(--text-main); white-space:pre-wrap;">${d.content}</div>
+                    `;
+
+                    comments.innerHTML = (d.comments || []).map(c => `
+                        <div style="background:var(--light-bg); border-radius:6px; padding:0.75rem; margin-bottom:0.5rem; border:1px solid var(--border-color);">
+                            <div style="font-size:0.8rem; font-weight:600; color:var(--dark); margin-bottom:0.2rem;">${c.authorName || 'User'}</div>
+                            <p style="font-size:0.9rem; color:var(--text-main);">${c.content}</p>
+                        </div>
+                    `).join('') || '<p style="color:var(--text-muted); font-size:0.9rem;">No comments yet. Write the first reply!</p>';
+                } catch (err) {
+                    details.innerHTML = '<p style="color:#ef4444;">Error loading discussion details.</p>';
+                }
+            };
+
+            // Post comment
+            document.getElementById('submit-comment').addEventListener('click', async () => {
+                const userId = localStorage.getItem('userId');
+                if (!userId) {
+                    alert('Please sign in to comment.');
+                    window.location.href = '/signin';
+                    return;
+                }
+
+                const content = document.getElementById('comment-input').value.trim();
+                if (!content || !currentDiscussionId) return;
+
+                try {
+                    const res = await fetch(`/api/discuss/${currentDiscussionId}/comments`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content, userId })
+                    });
+
+                    if (res.ok) {
+                        document.getElementById('comment-input').value = '';
+                        window.viewDiscussion(currentDiscussionId);
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

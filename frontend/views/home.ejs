@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { pageTitle: 'Home' }) %>
+    <link rel="stylesheet" href="/css/home.css">
+</head>
+<body>
+    <!-- Unified Responsive Navbar -->
+    <%- include('partials/navbar', { activePage: 'home' }) %>
+
+    <main>
+        <!-- Hero Section -->
+        <header class="hero">
+            <h1>Practice, Compete, and Prepare for Interviews</h1>
+            <p>Your ultimate coding playground to master data structures, algorithms, and problem-solving skills.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem;">
+                <a href="/problems" class="btn" style="background: var(--primary); color: white; border: none; font-weight: 600;">Explore Problems</a>
+                <a href="/contests" class="btn" style="background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); font-weight: 600;">Join Contests</a>
+            </div>
+        </header>
+
+        <!-- Platform Showcase Section -->
+        <section class="showcase">
+            <h2>Explore Our Platform</h2>
+            <div class="showcase-cards">
+                <div class="showcase-card">
+                    <div class="showcase-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Intuitive Coding Environment</h3>
+                    <p>Solve problems in a clean, feature-rich Monaco editor environment with multi-language support (Python, C++, Java, C).</p>
+                    <a href="/problems" class="showcase-link">Try Coding Now &rarr;</a>
+                </div>
+                
+                <div class="showcase-card">
+                    <div class="showcase-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3>Weekly Coding Contests</h3>
+                    <p>Participate in live challenges, earn contest ratings, and see your rank update dynamically on the leaderboard.</p>
+                    <a href="/contests" class="showcase-link">Join Contests &rarr;</a>
+                </div>
+                
+                <div class="showcase-card">
+                    <div class="showcase-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Community Discussions</h3>
+                    <p>Connect with fellow programmers to discuss algorithmic patterns, share solutions, and get help on tricky bugs.</p>
+                    <a href="/discuss" class="showcase-link">Start Discussing &rarr;</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Pillars -->
+        <section class="features">
+            <div class="feature-card">
+                <h3>Problem Solving</h3>
+                <p>Enhance your coding skills with hands-on practice across Easy, Medium, and Hard challenges.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Live Contests</h3>
+                <p>Compete in timed rounds with automated test case evaluation and rating progressions.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Interview Prep</h3>
+                <p>Prepare for top tech companies with curated problems covering arrays, trees, graphs, and DP.</p>
+            </div>
+        </section>
+
+        <!-- Why Choose Code Playground -->
+        <section class="features">
+            <h2>Why Choose Code Playground?</h2>
+            <div class="feature-items">
+                <div class="feature" style="--order: 0">
+                    <h3>Curated Algorithmic Problems</h3>
+                    <p>Comprehensive test suites for each problem, validating your logic against corner and stress cases.</p>
+                </div>
+                <div class="feature" style="--order: 1">
+                    <h3>Real-Time Leaderboard</h3>
+                    <p>Dynamic score tracking and rating calculations after every accepted contest submission.</p>
+                </div>
+                <div class="feature" style="--order: 2">
+                    <h3>Fast Cloud Execution</h3>
+                    <p>Reliable, sandboxed code execution engine providing quick compilation and execution feedback.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="testimonials">
+            <h2>What Developers Say</h2>
+            <div class="testimonial">
+                <p>"Code Playground has helped me improve my algorithmic problem-solving skills tremendously. The platform is responsive, fast, and engaging."</p>
+                <span>- Bhumit, Software Engineer</span>
+            </div>
+        </section>
+    </main>
+
+    <!-- Unified Responsive Footer -->
+    <%- include('partials/footer') %>
+</body>
+</html>

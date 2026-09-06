@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { pageTitle: 'Contact Us' }) %>
+    <link rel="stylesheet" href="/css/contact.css">
+    <style>
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 2.5rem;
+            max-width: 1100px;
+            margin: 2rem auto 4rem;
+            padding: 0 1.5rem;
+        }
+        .contact-card, .info-card {
+            background: #ffffff;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .faq-section {
+            max-width: 1100px;
+            margin: 0 auto 4rem;
+            padding: 0 1.5rem;
+        }
+        .faq-item {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+        }
+        .faq-question {
+            width: 100%;
+            text-align: left;
+            padding: 1.2rem 1.5rem;
+            background: transparent;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-answer {
+            display: none;
+            padding: 0 1.5rem 1.25rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+        @media (max-width: 800px) {
+            .contact-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <%- include('partials/navbar', { activePage: 'contact' }) %>
+
+    <main>
+        <div style="text-align: center; padding: 3rem 1.5rem 1rem;">
+            <h1 style="font-size: 2.2rem; color: var(--dark); margin-bottom: 0.5rem;">Get in Touch</h1>
+            <p style="color: var(--text-muted); font-size: 1.05rem;">Have questions, feature suggestions, or feedback? We'd love to hear from you.</p>
+        </div>
+
+        <div class="contact-container">
+            <!-- Contact Form -->
+            <div class="contact-card">
+                <h2 style="font-size: 1.3rem; margin-bottom: 1.25rem; color: var(--dark);">Send Us a Message</h2>
+                <form id="contactForm" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div>
+                        <label style="display: block; font-size: 0.88rem; font-weight: 500; margin-bottom: 0.3rem;">Full Name *</label>
+                        <input type="text" id="name" name="name" required placeholder="Your Name" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); outline: none;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.88rem; font-weight: 500; margin-bottom: 0.3rem;">Email Address *</label>
+                        <input type="email" id="email" name="email" required placeholder="you@example.com" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); outline: none;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.88rem; font-weight: 500; margin-bottom: 0.3rem;">Subject *</label>
+                        <input type="text" id="subject" name="subject" required placeholder="How can we help?" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); outline: none;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.88rem; font-weight: 500; margin-bottom: 0.3rem;">Your Message *</label>
+                        <textarea id="message" name="message" rows="4" required placeholder="Type your message here..." style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); outline: none; font-family: inherit;"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn" style="background: var(--primary); color: white; border: none; padding: 0.8rem; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </button>
+                    <div id="formMessage" style="font-size: 0.9rem; padding: 0.5rem; text-align: center;"></div>
+                </form>
+            </div>
+
+            <!-- Campus & Contact Info -->
+            <div class="info-card">
+                <h2 style="font-size: 1.3rem; margin-bottom: 1.25rem; color: var(--dark);">Campus & Contact Info</h2>
+                
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                        <div style="background: var(--primary-light); color: var(--primary); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div>
+                            <strong style="display: block; color: var(--dark);">Location</strong>
+                            <span style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">
+                                IIIT Vadodara - International Campus Diu (IIITV-ICD), Education Hub, Kevdi, Diu (U.T) - 362520
+                            </span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                        <div style="background: var(--primary-light); color: var(--primary); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div>
+                            <strong style="display: block; color: var(--dark);">Support Email</strong>
+                            <a href="mailto:support@codeplayground.com" style="color: var(--primary); text-decoration: none; font-size: 0.9rem;">support@codeplayground.com</a>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                        <div style="background: var(--primary-light); color: var(--primary); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fas fa-code-branch"></i>
+                        </div>
+                        <div>
+                            <strong style="display: block; color: var(--dark);">Open Source Repository</strong>
+                            <a href="https://github.com/Bhumit0922/Code-Playground" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: none; font-size: 0.9rem;">github.com/Bhumit0922/Code-Playground</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <section class="faq-section" id="faq">
+            <h2 style="text-align: center; margin-bottom: 2rem; color: var(--dark);">Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <button class="faq-question">
+                    What programming languages can I use?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    Code Playground currently supports Python 3, C++ (G++ 10.2), Java 15, and C (GCC 10.2). All code is executed in an isolated cloud sandbox for security and speed.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    How do contest rankings and ratings work?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    Each contest problem grants points based on difficulty (Easy: 100, Medium: 200, Hard: 300). The leaderboard ranks coders by highest score and lowest submission time. Once a contest finishes, ratings adjust based on performance.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    Is Code Playground free to use?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    Yes! All problem sets, public contests, code editors, and discussion forums are 100% free and open for everyone.
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <%- include('partials/footer') %>
+
+    <script>
+        // Contact form submission
+        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const msgEl = document.getElementById('formMessage');
+            msgEl.textContent = 'Sending message...';
+            msgEl.style.color = 'var(--primary)';
+
+            const payload = {
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                subject: document.getElementById('subject').value.trim(),
+                message: document.getElementById('message').value.trim()
+            };
+
+            try {
+                const res = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    msgEl.textContent = '✓ ' + (data.message || 'Thank you! Your message has been sent.');
+                    msgEl.style.color = 'var(--easy)';
+                    document.getElementById('contactForm').reset();
+                } else {
+                    msgEl.textContent = data.message || 'Failed to submit message.';
+                    msgEl.style.color = 'var(--hard)';
+                }
+            } catch (err) {
+                msgEl.textContent = 'Network error. Please try again later.';
+                msgEl.style.color = 'var(--hard)';
+            }
+        });
+
+        // FAQ accordion
+        document.querySelectorAll('.faq-question').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.parentElement;
+                item.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+</html>

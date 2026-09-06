@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { pageTitle: 'Contest In Progress' }) %>
+    <link rel="stylesheet" href="/css/leaderboard.css">
+    <style>
+        .not-ended-container {
+            max-width: 650px;
+            margin: 3.5rem auto 5rem;
+            padding: 2.5rem;
+            background: #ffffff;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+        }
+        .countdown-display {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: 'Fira Code', monospace;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: var(--light-bg);
+            border-radius: var(--radius-sm);
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <%- include('partials/navbar', { activePage: 'contests' }) %>
+
+    <main>
+        <div class="not-ended-container">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">⏳</div>
+            <h1 style="font-size: 1.6rem; color: var(--dark); margin-bottom: 0.5rem;"><%= contestName %></h1>
+            <p style="color: var(--text-muted); font-size: 1rem;">This contest is currently ongoing. Final leaderboard standings and official rating adjustments will be generated automatically once the timer expires.</p>
+
+            <div class="countdown-display" id="countdown-timer">
+                Calculating remaining time...
+            </div>
+
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap;">
+                <a href="/contestpage/<%= contestId %>" class="btn" style="background: var(--primary); color: white; padding: 0.75rem 1.5rem; border-radius: var(--radius-sm); font-weight: 600; text-decoration: none;">
+                    Go to Contest Arena &rarr;
+                </a>
+                <a href="/contests" class="btn" style="background: var(--light-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 0.75rem 1.5rem; border-radius: var(--radius-sm); text-decoration: none;">
+                    All Contests
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <%- include('partials/footer') %>
+
+    <script>
+        const endTime = new Date('<%= endTime %>').getTime();
+        const timerEl = document.getElementById('countdown-timer');
+
+        function updateTimer() {
+            const now = Date.now();
+            const diff = endTime - now;
+
+            if (diff <= 0) {
+                timerEl.textContent = 'Contest has concluded!';
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+                return;
+            }
+
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            timerEl.textContent = `${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        setInterval(updateTimer, 1000);
+        updateTimer();
+    </script>
+</body>
+</html>

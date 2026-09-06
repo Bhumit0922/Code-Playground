@@ -1,0 +1,480 @@
+/* Enhanced General Styles */
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #f0f4f8 0%, #e6eef7 100%);
+  width: 100%;
+  min-height: 100vh;
+  color: #2d3748;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.6;
+}
+
+/* Enhanced Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  background: linear-gradient(90deg, rgba(0, 84, 180, 0.9) 0%, rgba(0, 122, 255, 0.9) 100%);
+  height: 4rem;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
+}
+
+/* Mobile Menu Button */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  cursor: pointer;
+  z-index: 20;
+}
+
+.menu-toggle span {
+  display: block;
+  height: 3px;
+  width: 100%;
+  background-color: white;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+/* Logo Wrapper */
+.logo {
+  display: flex;
+  align-items: center;
+  height: 100%; /* Ensures logo is within navbar height */
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.03);
+}
+
+/* Logo Image */
+.logo a img {
+  height: 4rem; /* Fits within navbar height */
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  background: transparent; /* Ensures no extra background */
+  border-radius: 2%;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  transition: all 0.3s ease;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  padding: 0.5rem 0;
+  position: relative;
+}
+
+.nav-links a:hover {
+  color: #dbeafe;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+/* Contact Section */
+.contact {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.contact-container {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin-top: 2rem;
+  flex-wrap: wrap; /* Ensures responsiveness */
+  overflow: hidden; /* Prevents extra spacing */
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  width: 100%;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Form message styles */
+.form-message {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 5px;
+  font-weight: 500;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.contact-form label {
+  text-align: left;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 93%;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.contact-form textarea {
+  height: 150px; /* Fixed height */
+  resize: none; /* Prevents resizing */
+  overflow-y: auto; /* Enables scrolling if text exceeds space */
+}
+
+.contact-form button {
+  padding: 12px 24px;
+  background: rgba(0, 122, 255, 0.9);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 84, 180, 0.25);
+}
+
+.contact-form button:hover {
+  background: rgba(0, 84, 180, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 84, 180, 0.35);
+}
+
+/* Contact Info */
+.contact-info {
+  text-align: left;
+  max-width: 300px;
+}
+
+.contact-info h3 {
+  color: #5b9bd5;
+}
+
+.contact-info p {
+  margin: 0.5rem 0;
+}
+
+/* new added */
+/* FAQ Section */
+.faq {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: rgba(245, 247, 250, 0.8);
+}
+
+.faq h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: rgba(0, 84, 180, 0.9);
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.5rem;
+}
+
+.faq h2::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 3px;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(90deg, rgba(0, 84, 180, 0.9) 0%, rgba(64, 156, 255, 0.9) 100%);
+  border-radius: 3px;
+}
+
+/* FAQ Items */
+.faq-container {
+  max-width: 700px;
+  margin: auto;
+}
+
+.faq-item {
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 84, 180, 0.1);
+  transition: all 0.3s ease;
+}
+
+.faq-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 84, 180, 0.2);
+  transform: translateY(-2px);
+}
+
+/* FAQ Questions */
+.faq-question {
+  width: 100%;
+  padding: 1rem;
+  text-align: left;
+  background: linear-gradient(90deg, rgba(0, 84, 180, 0.9) 0%, rgba(0, 122, 255, 0.9) 100%);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.faq-question:hover {
+  background: rgba(0, 84, 180, 0.9);
+}
+
+.faq-question .arrow {
+  transition: transform 0.3s ease;
+}
+
+/* FAQ Answers */
+.faq-answer {
+  display: none;
+  padding: 1.2rem;
+  background: white;
+  text-align: left;
+  border-left: 3px solid rgba(0, 122, 255, 0.9);
+  line-height: 1.6;
+}
+
+/* Show Answer when Active */
+.faq-item.active .faq-answer {
+  display: block;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.faq-item.active .faq-question .arrow {
+  transform: rotate(180deg);
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 1.5rem;
+  background: linear-gradient(90deg, rgba(0, 84, 180, 0.9) 0%, rgba(0, 122, 255, 0.9) 100%);
+  color: white;
+  margin-top: auto;
+  width: 100%;
+  box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.footer p {
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 968px) {
+  .contact h2 {
+    font-size: 1.8rem;
+  }
+  
+  .faq h2 {
+    font-size: 1.8rem;
+  }
+  
+  .faq-container {
+    max-width: 90%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .navbar {
+    padding: 0 1.5rem;
+  }
+  
+  .menu-toggle {
+    display: flex;
+  }
+  
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 70%;
+    height: 100vh;
+    background: rgba(0, 84, 180, 0.95);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    transition: right 0.3s ease;
+    padding: 2rem;
+    z-index: 15;
+  }
+  
+  .nav-links.active {
+    right: 0;
+  }
+  
+  .contact-container {
+    gap: 2rem;
+  }
+  
+  .contact-form, .contact-info {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .faq-question {
+    font-size: 0.9rem;
+    padding: 0.8rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .navbar {
+    padding: 0 1rem;
+    height: 3.5rem;
+  }
+  
+  .logo a img {
+    height: 3.5rem;
+  }
+  
+  .nav-links {
+    width: 80%;
+  }
+  
+  .contact {
+    padding: 3rem 1rem;
+  }
+  
+  .contact h2, .faq h2 {
+    font-size: 1.5rem;
+  }
+  
+  .contact-form {
+    padding: 1.5rem;
+  }
+  
+  .contact-form input,
+  .contact-form textarea {
+    width: 90%;
+    font-size: 0.9rem;
+  }
+  
+  .contact-form button {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+  
+  .faq {
+    padding: 3rem 1rem;
+  }
+  
+  .faq-item {
+    margin-bottom: 0.8rem;
+  }
+  
+  .faq-question {
+    font-size: 0.85rem;
+    padding: 0.7rem;
+  }
+  
+  .faq-answer {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .footer {
+    padding: 1rem;
+  }
+  
+  .footer p {
+    font-size: 0.8rem;
+  }
+}
+
+/* Menu Overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 5;
+  display: none;
+}
+
+.overlay.active {
+  display: block;
+}
+
+/* Mobile Menu Active State */
+.menu-toggle.active span:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+
+.menu-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.active span:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
+}
+
+/* Make input fields responsive */
+@media screen and (max-width: 350px) {
+  .contact-form input,
+  .contact-form textarea {
+    width: 85%;
+  }
+  
+  .contact-form, .contact-info {
+    padding: 1rem;
+  }
+  
+  .faq-question {
+    font-size: 0.8rem;
+    padding: 0.6rem;
+  }
+}

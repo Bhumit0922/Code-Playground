@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { pageTitle: contestName + ' - Leaderboard' }) %>
+    <link rel="stylesheet" href="/css/leaderboard.css">
+    <style>
+        .leaderboard-section {
+            max-width: 1000px;
+            margin: 2.5rem auto 4rem;
+            padding: 0 1.5rem;
+        }
+        .leaderboard-card {
+            background: #ffffff;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            margin-top: 1rem;
+        }
+        .leaderboard-table th {
+            background: #f8fafc;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .leaderboard-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+        .winner-row-1 {
+            background: #fffbeb !important;
+            font-weight: 600;
+        }
+        .winner-row-2 {
+            background: #f8fafc !important;
+            font-weight: 500;
+        }
+        .winner-row-3 {
+            background: #fdf2f8 !important;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <%- include('partials/navbar', { activePage: 'contests' }) %>
+
+    <main class="leaderboard-section">
+        <a href="/contests" class="btn" style="background: var(--light-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 0.5rem 1rem; border-radius: var(--radius-sm); text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; margin-bottom: 1.5rem;">
+            &larr; Back to Contests
+        </a>
+
+        <div class="leaderboard-card">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 1.8rem; color: var(--dark);"><%= contestName %></h1>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Official Final Standings & Points</p>
+            </div>
+
+            <div class="table-responsive">
+                <table class="leaderboard-table" aria-label="Contest final standings">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">Rank</th>
+                            <th style="width: 45%;">Coder</th>
+                            <th style="width: 20%;">Total Score</th>
+                            <th style="width: 20%;">Problems Solved</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (leaderboard && leaderboard.length > 0) { %>
+                            <% leaderboard.forEach((entry, index) => { %>
+                                <% 
+                                    let rowClass = "";
+                                    let rankDisplay = entry.rank || (index + 1);
+                                    if (index === 0) { rowClass = "winner-row-1"; rankDisplay = "🥇 1st"; }
+                                    else if (index === 1) { rowClass = "winner-row-2"; rankDisplay = "🥈 2nd"; }
+                                    else if (index === 2) { rowClass = "winner-row-3"; rankDisplay = "🥉 3rd"; }
+                                %>
+                                <tr class="<%= rowClass %>">
+                                    <td><%= rankDisplay %></td>
+                                    <td><i class="fas fa-user-circle" style="color:#94a3b8; margin-right: 0.4rem;"></i> <%= entry.username %></td>
+                                    <td style="color: var(--primary); font-weight: 700;"><%= entry.score %></td>
+                                    <td><%= entry.problemsSolved %></td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="4" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                                    No participants enrolled in this contest.
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <%- include('partials/footer') %>
+</body>
+</html>

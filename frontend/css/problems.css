@@ -1,0 +1,477 @@
+/* Enhanced General Styles */
+body {
+  font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #f0f4f8 0%, #e6eef7 100%);
+  width: 100%;
+  min-height: 100vh;
+  color: #2d3748;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.6;
+}
+
+/* Enhanced Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(90deg, rgba(0, 84, 180, 0.9) 0%, rgba(0, 122, 255, 0.9) 100%);
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+.menu-toggle {
+  display: block;
+  cursor: pointer;
+  color: white;
+  font-size: 1.5rem;
+  background: transparent;
+  border: none;
+  padding: 0.5rem;
+  z-index: 100;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  height: 3rem;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.03);
+}
+
+.logo a img {
+  height: 3rem;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  background: transparent;
+  border-radius: 2%;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  transition: all 0.3s ease;
+}
+
+.nav-links {
+  list-style: none;
+  display: none; /* Hidden by default on mobile */
+  flex-direction: column;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(90deg, rgba(0, 84, 180, 0.95) 0%, rgba(0, 122, 255, 0.95) 100%);
+  padding: 1rem 0;
+  margin: 0;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  z-index: 99;
+}
+
+.nav-links.active {
+  display: flex;
+}
+
+.nav-links li {
+  text-align: center;
+  margin: 0.5rem 0;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  padding: 0.5rem 1rem;
+  display: block;
+  position: relative;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 50%;
+  background-color: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-links a:hover::after {
+  width: 50%;
+}
+
+.nav-links a:hover {
+  color: #dbeafe;
+}
+
+/* Enhanced Filter Container - Mobile First */
+.filter-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin: 1.2rem 0;
+  padding: 0 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#search-bar, select {
+  padding: 0.7rem;
+  font-size: 0.9rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 84, 180, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+  font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+#search-bar:focus, select:focus {
+  border-color: rgba(0, 122, 255, 0.9);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+  outline: none;
+}
+
+/* Enhanced Problems Table - Mobile First */
+.problems-container {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0 0.5rem 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+table {
+  width: 100%;
+  min-width: 280px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(91, 155, 213, 0.15);
+  transition: all 0.3s ease;
+}
+
+th, td {
+  padding: 0.8rem 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid #edf2f7;
+}
+
+th {
+  background: linear-gradient(90deg, rgba(0, 84, 180, 0.9) 0%, rgba(0, 122, 255, 0.9) 100%);
+  color: white;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  font-size: 0.85rem;
+}
+
+td {
+  font-size: 0.85rem;
+}
+
+tr {
+  transition: background-color 0.3s ease;
+}
+
+tr:hover {
+  background-color: #f8fafc;
+  cursor: pointer;
+}
+
+/* Loading & Error Messages */
+.loading-text, .error-text, .empty-text {
+  text-align: center;
+  padding: 2rem 1rem;
+  font-size: 0.9rem;
+  color: #718096;
+}
+
+.error-text {
+  color: #e53e3e;
+}
+
+/* Difficulty Indicators */
+.difficulty-cell {
+  text-align: center;
+  vertical-align: middle;
+  height: 100%;
+}
+
+.easy, .medium, .hard {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.easy {
+  color: #38a169;
+  background: rgba(56, 161, 105, 0.1);
+  padding: 0.25rem 0.5rem;
+}
+
+.medium {
+  color: #dd6b20;
+  background: rgba(221, 107, 32, 0.1);
+}
+
+.hard {
+  color: #e53e3e;
+  background: rgba(229, 62, 62, 0.1);
+}
+
+/* Status Indicators */
+.status-solved, .status-unsolved {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.status-solved {
+  background: #38a169;
+}
+
+.status-unsolved {
+  background: #e2e8f0;
+}
+
+/* Enhanced Footer */
+.footer {
+  text-align: center;
+  padding: 1.2rem 1rem;
+  background: linear-gradient(90deg, rgba(0, 84, 180, 0.9) 0%, rgba(0, 122, 255, 0.9) 100%);
+  color: white;
+  margin-top: auto;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
+}
+
+.footer p {
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+}
+
+/* Small Tablet Breakpoint (576px and up) */
+@media (min-width: 576px) {
+  .problems-container {
+    padding: 0 1rem 1.5rem;
+  }
+  
+  table {
+    min-width: 480px;
+  }
+  
+  th, td {
+    padding: 1rem 0.75rem;
+    font-size: 0.9rem;
+  }
+  
+  .filter-container {
+    padding: 0 1.5rem;
+  }
+}
+
+/* Tablet Breakpoint (768px and up) */
+@media (min-width: 768px) {
+  .navbar {
+    padding: 0 2rem;
+    height: 4rem;
+  }
+  
+  .menu-toggle {
+    display: none;
+  }
+  
+  .logo {
+    height: 4rem;
+  }
+  
+  .logo a img {
+    height: 4rem;
+  }
+  
+  .nav-links {
+    display: flex !important; /* Always display on tablet+ */
+    flex-direction: row;
+    position: static;
+    width: auto;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+  }
+  
+  .nav-links li {
+    margin: 0;
+  }
+  
+  .nav-links a {
+    padding: 0.5rem 1rem;
+  }
+  
+  .nav-links a::after {
+    left: 0;
+    transform: none;
+  }
+  
+  .nav-links a:hover::after {
+    width: 100%;
+  }
+  
+  .filter-container {
+    flex-direction: row;
+    justify-content: center;
+    gap: 1.5rem;
+    margin: 2rem 0;
+    padding: 0 2rem;
+  }
+  
+  #search-bar, select {
+    width: auto;
+    min-width: 180px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+  }
+  
+  .problems-container {
+    padding: 0 2rem 2rem;
+  }
+  
+  table {
+    min-width: 600px;
+    width: 100%;
+    border-radius: 12px;
+  }
+  
+  th, td {
+    padding: 1.25rem 1rem;
+  }
+  
+  th {
+    font-size: 1rem;
+  }
+  
+  td {
+    font-size: 0.95rem;
+  }
+  
+  .easy, .medium, .hard {
+    font-size: 0.85rem;
+    padding: 0.25rem 0.75rem;
+  }
+}
+
+/* Desktop Breakpoint (992px and up) */
+@media (min-width: 992px) {
+  .filter-container {
+    justify-content: flex-start;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 2rem;
+  }
+  
+  .problems-container {
+    padding: 0 3rem 3rem;
+  }
+  
+  table {
+    width: 100%;
+    max-width: 1200px;
+  }
+  
+  #search-bar {
+    min-width: 300px;
+  }
+  
+  select {
+    min-width: 200px;
+  }
+  
+  th, td {
+    padding: 1.25rem;
+  }
+}
+
+/* Large Desktop Breakpoint (1200px and up) */
+@media (min-width: 1200px) {
+  .navbar {
+    padding: 0 4rem;
+  }
+  
+  .filter-container {
+    padding: 0 4rem;
+  }
+  
+  .problems-container {
+    padding: 0 4rem 3rem;
+  }
+}
+
+/* Hover effects - separated for devices that support hover */
+@media (hover: hover) {
+  tbody tr {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  tbody tr:hover {
+    background: #f7fafc;
+    transform: translateX(5px);
+  }
+  
+  tr::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #5b9bd5, transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  tr:hover::after {
+    opacity: 0.3;
+  }
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { pageTitle: typeof title !== 'undefined' ? title : 'Error Occurred' }) %>
+    <style>
+        .error-page {
+            min-height: calc(100vh - var(--nav-height) - 150px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem 1.5rem;
+        }
+        .error-box {
+            background: #ffffff;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            padding: 3rem 2rem;
+            max-width: 550px;
+            width: 100%;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+        .error-icon {
+            font-size: 3.5rem;
+            color: #ef4444;
+            margin-bottom: 1rem;
+        }
+        .error-title {
+            font-size: 1.6rem;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+        }
+        .error-message {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.75rem;
+        }
+        .error-details {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            text-align: left;
+            font-family: monospace;
+            font-size: 0.82rem;
+            color: #ef4444;
+            margin-bottom: 1.5rem;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+        .btn-home {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition: var(--transition);
+        }
+        .btn-home:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <%- include('partials/navbar', { activePage: '' }) %>
+
+    <main class="error-page">
+        <div class="error-box">
+            <div class="error-icon">⚠️</div>
+            <h1 class="error-title"><%= typeof title !== 'undefined' ? title : 'Error Encountered' %></h1>
+            <p class="error-message"><%= typeof message !== 'undefined' ? message : 'Something went wrong while processing your request. Please return home or contact support.' %></p>
+            
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="error-details">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <a href="/" class="btn-home">&larr; Return to Home</a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <%- include('partials/footer') %>
+</body>
+</html>

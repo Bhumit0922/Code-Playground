@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { pageTitle: 'Explore' }) %>
+    <link rel="stylesheet" href="/css/explore.css">
+    <style>
+        .explore-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+        .explore-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <%- include('partials/navbar', { activePage: 'explore' }) %>
+
+    <main>
+        <!-- Explore Section -->
+        <section class="explore">
+            <h1>Explore Code Playground</h1>
+            <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 1.1rem;">
+                Browse featured challenges, master core computer science topics, and prepare for competitions.
+            </p>
+
+            <!-- Scrollable Featured Problems -->
+            <h2><i class="fas fa-star" style="color: #f59e0b; margin-right: 0.5rem;"></i> Featured Problems</h2>
+            <div class="scroll-container" id="featured-problems">
+                <div class="explore-card loading">
+                    <h3 class="problem-title">Loading problems...</h3>
+                    <p>Fetching the latest challenges from the problem bank.</p>
+                </div>
+            </div>
+
+            <!-- Scrollable Coding Topics -->
+            <h2><i class="fas fa-layer-group" style="color: var(--primary); margin-right: 0.5rem;"></i> Popular Topics</h2>
+            <div class="scroll-container">
+                <div class="explore-card" style="--order: 1;">
+                    <h2>Data Structures</h2>
+                    <p>Learn arrays, linked lists, stacks, queues, trees, and hash maps.</p>
+                    <a href="/problems?topic=Data%20Structures">Explore Topic &rarr;</a>
+                </div>
+                <div class="explore-card" style="--order: 2;">
+                    <h2>Algorithms</h2>
+                    <p>Master two pointers, sliding window, binary search, and divide & conquer.</p>
+                    <a href="/problems?topic=Algorithms">Explore Topic &rarr;</a>
+                </div>
+                <div class="explore-card" style="--order: 3;">
+                    <h2>Dynamic Programming</h2>
+                    <p>Tackle classic optimization, memoization, and bottom-up DP problems.</p>
+                    <a href="/problems?topic=Dynamic%20Programming">Explore Topic &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Scrollable Contests & Challenges -->
+            <h2><i class="fas fa-trophy" style="color: #10b981; margin-right: 0.5rem;"></i> Competitions & Contests</h2>
+            <div class="scroll-container">
+                <div class="explore-card" style="--order: 1;">
+                    <h2>Weekly Coding Challenges</h2>
+                    <p>Join timed rounds, earn points, and climb up the platform rankings.</p>
+                    <a href="/contests">View Contests &rarr;</a>
+                </div>
+                <div class="explore-card" style="--order: 2;">
+                    <h2>Host Custom Contest</h2>
+                    <p>Create private or public coding contests for your friends, college, or team.</p>
+                    <a href="/create_contest">Create Contest &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Community Discussions -->
+            <h2><i class="fas fa-comments" style="color: #8b5cf6; margin-right: 0.5rem;"></i> Community Forum</h2>
+            <div class="scroll-container">
+                <div class="explore-card" style="--order: 1;">
+                    <h2>Join Discussions</h2>
+                    <p>Ask coding questions, discuss alternative solutions, and learn together.</p>
+                    <a href="/discuss">Join Forum &rarr;</a>
+                </div>
+                <div class="explore-card" style="--order: 2;">
+                    <h2>Interview Experiences</h2>
+                    <p>Read real-world coding interview patterns and insights from other coders.</p>
+                    <a href="/discuss">Read Experiences &rarr;</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <!-- Scripts -->
+    <script>
+        // Fetch featured problems from the API
+        async function fetchFeaturedProblems() {
+            try {
+                const response = await fetch('/api/problems?limit=6&sort=newest');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch problems');
+                }
+                const problems = await response.json();
+                displayFeaturedProblems(problems);
+            } catch (error) {
+                console.error('Error fetching problems:', error);
+                document.getElementById('featured-problems').innerHTML = `
+                    <div class="explore-card error">
+                        <h3 class="problem-title">Unable to Load Problems</h3>
+                        <p>Could not connect to problem database. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayFeaturedProblems(problems) {
+            const container = document.getElementById('featured-problems');
+            
+            if (!problems || problems.length === 0) {
+                container.innerHTML = `
+                    <div class="explore-card">
+                        <h3 class="problem-title">No Problems Found</h3>
+                        <p>No featured problems are available right now.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = problems.map((problem, index) => {
+                const diffLower = (problem.difficulty || 'medium').toLowerCase();
+                const descSnippet = problem.description 
+                    ? problem.description.replace(/<[^>]*>?/gm, '').substring(0, 75) + '...'
+                    : 'Practice this algorithmic problem.';
+                
+                return `
+                    <div class="explore-card" style="--order: ${index + 1};">
+                        <h3 class="problem-title">${problem.title}</h3>
+                        <div style="margin: 0.5rem 0;">
+                            <span class="badge badge-${diffLower}">${problem.difficulty}</span>
+                            <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem;">${problem.topic || 'Algorithms'}</span>
+                        </div>
+                        <p>${descSnippet}</p>
+                        <a href="/editcode/${problem._id}">Solve Problem &rarr;</a>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchFeaturedProblems);
+    </script>
+</body>
+</html>

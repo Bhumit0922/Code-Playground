@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { pageTitle: 'Create Contest' }) %>
+    <link rel="stylesheet" href="/css/create_contest.css">
+    <style>
+        .create-contest-container {
+            max-width: 900px;
+            margin: 2.5rem auto 4rem;
+            padding: 0 1.5rem;
+        }
+        .form-card {
+            background: #ffffff;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .full-width {
+            grid-column: span 2;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            font-size: 0.92rem;
+            margin-bottom: 0.4rem;
+            color: var(--dark);
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-family: inherit;
+            outline: none;
+            transition: var(--transition);
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+        .search-results-box {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 0.5rem;
+            display: none;
+            background: white;
+        }
+        .search-item {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .search-item:hover {
+            background: #f1f5f9;
+        }
+        .selected-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin: 0.25rem;
+        }
+        .selected-pill span.remove-btn {
+            cursor: pointer;
+            font-weight: bold;
+            color: #ef4444;
+        }
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+            .form-card { padding: 1.5rem; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <%- include('partials/navbar', { activePage: 'contests' }) %>
+
+    <main class="create-contest-container">
+        <div class="form-card">
+            <h1 style="font-size: 1.8rem; margin-bottom: 0.5rem; color: var(--dark);">Host a Coding Contest</h1>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Set up your contest rules, select problems, and invite participants.</p>
+
+            <form id="create-contest-form" class="form-grid">
+                <div class="form-group">
+                    <label for="contest-name">Contest Name *</label>
+                    <input type="text" id="contest-name" name="name" required placeholder="e.g. Campus Coders Round 1">
+                </div>
+
+                <div class="form-group">
+                    <label for="contest-code">Contest Code *</label>
+                    <input type="text" id="contest-code" name="contestCode" required placeholder="Unique Code (e.g. CAMPUS01)">
+                </div>
+
+                <div class="form-group">
+                    <label for="start-time">Start Date & Time *</label>
+                    <input type="datetime-local" id="start-time" name="startTime" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="end-time">End Date & Time *</label>
+                    <input type="datetime-local" id="end-time" name="endTime" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="difficulty">Overall Difficulty</label>
+                    <select id="difficulty" name="difficulty">
+                        <option value="Easy">Easy</option>
+                        <option value="Medium" selected>Medium</option>
+                        <option value="Hard">Hard</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="visibility">Visibility</label>
+                    <select id="visibility" name="visibility">
+                        <option value="Private">Private (Code Required)</option>
+                        <option value="Public" id="public-option" style="display:none;">Public (Listed in Lobby)</option>
+                    </select>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="description">Contest Description</label>
+                    <textarea id="description" name="description" rows="3" placeholder="Brief rules, guidelines, or details about this round..."></textarea>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Select Problems *</label>
+                    <input type="text" id="problem-search" placeholder="Type problem title to search & add...">
+                    <div id="search-results" class="search-results-box"></div>
+
+                    <div style="margin-top: 1rem;">
+                        <label style="font-size: 0.85rem; color: var(--text-muted);">Selected Contest Problems:</label>
+                        <div id="selected-problems-container" style="min-height: 40px; padding: 0.5rem 0;">
+                            <span style="color: var(--text-muted); font-size: 0.9rem;" id="no-problems-msg">No problems selected yet. Search above to add problems.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="full-width" style="margin-top: 1rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                    <a href="/contests" class="btn" style="background: var(--light-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 0.75rem 1.5rem; text-decoration: none; border-radius: var(--radius-sm);">Cancel</a>
+                    <button type="submit" class="btn" style="background: var(--primary); color: white; border: none; padding: 0.75rem 2rem; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer;">Create Contest</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <%- include('partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                alert('Please sign in to host a contest');
+                window.location.href = '/signin';
+                return;
+            }
+
+            // Check admin rights for Public contest creation
+            try {
+                const adminCheck = await fetch(`/api/auth/check-admin?userId=${userId}`);
+                const adminData = await adminCheck.json();
+                if (adminData.isAdmin) {
+                    document.getElementById('public-option').style.display = 'block';
+                }
+            } catch (e) {}
+
+            // Set default dates
+            const now = new Date();
+            now.setHours(now.getHours() + 1);
+            document.getElementById('start-time').value = now.toISOString().slice(0, 16);
+            now.setHours(now.getHours() + 2);
+            document.getElementById('end-time').value = now.toISOString().slice(0, 16);
+
+            // Problem search and selection
+            const searchInput = document.getElementById('problem-search');
+            const searchResults = document.getElementById('search-results');
+            const selectedContainer = document.getElementById('selected-problems-container');
+            const noProblemsMsg = document.getElementById('no-problems-msg');
+
+            let selectedProblems = [];
+            let searchTimeout;
+
+            searchInput.addEventListener('input', () => {
+                clearTimeout(searchTimeout);
+                const query = searchInput.value.trim();
+                if (query.length < 2) {
+                    searchResults.style.display = 'none';
+                    return;
+                }
+
+                searchTimeout = setTimeout(async () => {
+                    try {
+                        const res = await fetch(`/api/problems/search?q=${encodeURIComponent(query)}`);
+                        const problems = await res.json();
+                        
+                        if (problems.length === 0) {
+                            searchResults.innerHTML = '<div style="padding:0.75rem; color:var(--text-muted); font-size:0.85rem;">No matching problems found</div>';
+                        } else {
+                            searchResults.innerHTML = problems.map(p => `
+                                <div class="search-item" data-id="${p._id}" data-title="${p.title}" data-diff="${p.difficulty}">
+                                    <span><strong>${p.title}</strong> (${p.difficulty})</span>
+                                    <button type="button" style="background:var(--primary); color:white; border:none; padding:2px 8px; border-radius:4px; font-size:0.8rem; cursor:pointer;">Add</button>
+                                </div>
+                            `).join('');
+                        }
+                        searchResults.style.display = 'block';
+
+                        // Attach add events
+                        searchResults.querySelectorAll('.search-item').forEach(item => {
+                            item.addEventListener('click', () => {
+                                const id = item.dataset.id;
+                                const title = item.dataset.title;
+                                const diff = item.dataset.diff;
+                                addProblem(id, title, diff);
+                                searchResults.style.display = 'none';
+                                searchInput.value = '';
+                            });
+                        });
+                    } catch (err) {
+                        console.error(err);
+                    }
+                }, 250);
+            });
+
+            function addProblem(id, title, diff) {
+                if (selectedProblems.some(p => p.id === id)) return;
+                selectedProblems.push({ id, title, diff });
+                renderSelectedProblems();
+            }
+
+            function removeProblem(id) {
+                selectedProblems = selectedProblems.filter(p => p.id !== id);
+                renderSelectedProblems();
+            }
+
+            function renderSelectedProblems() {
+                if (selectedProblems.length === 0) {
+                    noProblemsMsg.style.display = 'inline';
+                    selectedContainer.innerHTML = '';
+                    selectedContainer.appendChild(noProblemsMsg);
+                    return;
+                }
+
+                noProblemsMsg.style.display = 'none';
+                selectedContainer.innerHTML = selectedProblems.map(p => `
+                    <span class="selected-pill">
+                        ${p.title} (${p.diff})
+                        <span class="remove-btn" onclick="window.removeSelectedProblem('${p.id}')">&times;</span>
+                    </span>
+                `).join('');
+            }
+
+            window.removeSelectedProblem = removeProblem;
+
+            // Form submission
+            document.getElementById('create-contest-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                if (selectedProblems.length === 0) {
+                    alert('Please select at least one problem for the contest');
+                    return;
+                }
+
+                const payload = {
+                    name: document.getElementById('contest-name').value.trim(),
+                    contestCode: document.getElementById('contest-code').value.trim().toUpperCase(),
+                    startTime: document.getElementById('start-time').value,
+                    endTime: document.getElementById('end-time').value,
+                    difficulty: document.getElementById('difficulty').value,
+                    visibility: document.getElementById('visibility').value,
+                    description: document.getElementById('description').value.trim(),
+                    problems: selectedProblems.map(p => p.id),
+                    userId: userId
+                };
+
+                try {
+                    const res = await fetch('/api/contests', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                        alert('Contest created successfully!');
+                        window.location.href = `/contestpage/${data.contest._id}`;
+                    } else {
+                        alert(data.msg || data.error || 'Failed to create contest');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('Server error creating contest');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

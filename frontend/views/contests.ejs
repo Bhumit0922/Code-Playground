@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { pageTitle: 'Coding Contests' }) %>
+    <link rel="stylesheet" href="/css/contests.css">
+    <style>
+        .contest-container {
+            max-width: 1280px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        .create-contest-btn, .join-contest-btn {
+            background: var(--primary);
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .create-contest-btn:hover, .join-contest-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+        #join-contest-form {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        #contest-code {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            outline: none;
+            min-width: 220px;
+        }
+        #contest-code:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+        .contest-section {
+            max-width: 1280px;
+            margin: 0 auto 3rem;
+            padding: 0 1.5rem;
+        }
+        .contest-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--dark);
+        }
+        .contest-table-wrapper {
+            background: #ffffff;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            overflow-x: auto;
+        }
+        .contest-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        .contest-table th {
+            background: #f8fafc;
+            padding: 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+        .contest-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.92rem;
+            vertical-align: middle;
+        }
+        .contest-table tbody tr:hover {
+            background: #f8fafc;
+        }
+        .register-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.88rem;
+            transition: var(--transition);
+        }
+        .register-btn:hover {
+            background: var(--primary-hover);
+        }
+        .leaderboard-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.88rem;
+            transition: var(--transition);
+        }
+        .leaderboard-btn:hover {
+            background: #059669;
+        }
+        .leaderboard-btn.disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+        .leaderboard-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 1rem;
+        }
+        .leaderboard-modal-content {
+            background: #ffffff;
+            border-radius: var(--radius);
+            padding: 2rem;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+        }
+        .close-modal-btn {
+            margin-top: 1.5rem;
+            background: var(--dark);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <%- include('partials/navbar', { activePage: 'contests' }) %>
+
+    <main>
+        <!-- Create & Join Contest Bar -->
+        <div class="contest-container">
+            <div>
+                <a href="/create_contest" class="create-contest-btn">
+                    <i class="fas fa-plus"></i> Host a Contest
+                </a>
+            </div>
+
+            <div class="join-contest">
+                <form id="join-contest-form">
+                    <input type="text" id="contest-code" placeholder="Enter Contest Code (e.g. WEEKLY101)" aria-label="Contest code" required>
+                    <button type="submit" class="join-contest-btn">
+                        <i class="fas fa-sign-in-alt"></i> Join by Code
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Upcoming & Ongoing Contests -->
+        <section class="contest-section">
+            <h2><i class="fas fa-clock" style="color: var(--primary);"></i> Upcoming & Ongoing Contests</h2>
+            <div class="contest-table-wrapper">
+                <table class="contest-table" aria-label="Upcoming and ongoing contests">
+                    <thead>
+                        <tr>
+                            <th scope="col">Contest Name</th>
+                            <th scope="col">Start Time</th>
+                            <th scope="col">End Time</th>
+                            <th scope="col">Difficulty</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Participants</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="upcoming-contests-body">
+                        <tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-muted);">Loading contests...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Past Contests & Leaderboards -->
+        <section class="contest-section">
+            <h2><i class="fas fa-history" style="color: #64748b;"></i> Past Contests & Standings</h2>
+            <div class="contest-table-wrapper">
+                <table class="contest-table" aria-label="Past contests and leaderboards">
+                    <thead>
+                        <tr>
+                            <th scope="col">Contest Name</th>
+                            <th scope="col">Start Time</th>
+                            <th scope="col">End Time</th>
+                            <th scope="col">Difficulty</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Winner</th>
+                            <th scope="col">Leaderboard</th>
+                        </tr>
+                    </thead>
+                    <tbody id="past-contests-body">
+                        <tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-muted);">Loading past contests...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Leaderboard Modal -->
+    <div id="leaderboard-modal" class="leaderboard-modal" aria-modal="true" role="dialog" aria-labelledby="modal-title">
+        <div class="leaderboard-modal-content">
+            <h3 id="modal-title" style="color: var(--dark); margin-bottom: 0.75rem;">Leaderboard In Progress</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">The official standings and ratings will be finalized immediately after the contest concludes.</p>
+            <button id="close-modal-btn" class="close-modal-btn">Close</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <%- include('partials/footer') %>
+
+    <script>
+        // Fetch contests from relative API route (fixing previous hardcoded localhost bug)
+        async function fetchContests() {
+            try {
+                const response = await fetch('/api/contests');
+                if (!response.ok) throw new Error('Failed to fetch contests');
+                
+                const data = await response.json();
+                renderContests(data.currentContests || [], data.pastContests || []);
+            } catch (error) {
+                console.error('Failed to fetch contests:', error);
+                document.getElementById('upcoming-contests-body').innerHTML = `<tr><td colspan="7" style="text-align:center; color:#ef4444; padding:2rem;">Failed to load contests. Please try again later.</td></tr>`;
+                document.getElementById('past-contests-body').innerHTML = `<tr><td colspan="7" style="text-align:center; color:#ef4444; padding:2rem;">Failed to load contests. Please try again later.</td></tr>`;
+            }
+        }
+
+        function renderContests(currentContests = [], pastContests = []) {
+            const upcomingBody = document.getElementById('upcoming-contests-body');
+            const pastBody = document.getElementById('past-contests-body');
+
+            upcomingBody.innerHTML = '';
+            pastBody.innerHTML = '';
+
+            if (currentContests.length === 0) {
+                upcomingBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-muted);">No ongoing or upcoming contests scheduled.</td></tr>';
+            } else {
+                currentContests.forEach(contest => {
+                    const row = document.createElement('tr');
+                    const startTime = new Date(contest.startTime).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
+                    const endTime = new Date(contest.endTime).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
+                    const diffLower = (contest.difficulty || 'medium').toLowerCase();
+                    const isOngoing = contest.status === 'Ongoing';
+
+                    row.innerHTML = `
+                        <td style="font-weight: 600; color: var(--text-main);">${contest.name}</td>
+                        <td>${startTime}</td>
+                        <td>${endTime}</td>
+                        <td><span class="badge badge-${diffLower}">${contest.difficulty || 'Medium'}</span></td>
+                        <td>
+                            <span style="font-weight:600; color: ${isOngoing ? '#10b981' : '#2563eb'};">
+                                ${isOngoing ? '● LIVE' : 'Scheduled'}
+                            </span>
+                        </td>
+                        <td>${contest.participants ? contest.participants.length : 0} enrolled</td>
+                        <td>
+                            <button onclick="handleContestRegistration('${contest._id}')" class="register-btn">
+                                ${isOngoing ? 'Enter Contest' : 'Register'}
+                            </button>
+                        </td>
+                    `;
+                    upcomingBody.appendChild(row);
+                });
+            }
+
+            if (pastContests.length === 0) {
+                pastBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-muted);">No past contests recorded yet.</td></tr>';
+            } else {
+                pastContests.forEach(contest => {
+                    const row = document.createElement('tr');
+                    const startTime = new Date(contest.startTime).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
+                    const endTime = new Date(contest.endTime).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
+                    const diffLower = (contest.difficulty || 'medium').toLowerCase();
+                    const winner = (contest.leaderboard && contest.leaderboard.length > 0)
+                        ? `🏆 ${contest.leaderboard[0].username || 'Anonymous'}`
+                        : 'No winner';
+
+                    row.innerHTML = `
+                        <td style="font-weight: 600;">${contest.name}</td>
+                        <td>${startTime}</td>
+                        <td>${endTime}</td>
+                        <td><span class="badge badge-${diffLower}">${contest.difficulty || 'Medium'}</span></td>
+                        <td><span style="color: var(--text-muted);">Completed</span></td>
+                        <td style="color: #059669; font-weight: 500;">${winner}</td>
+                        <td>
+                            <button onclick="viewLeaderboard('${contest._id}')" class="leaderboard-btn">
+                                View Leaderboard
+                            </button>
+                        </td>
+                    `;
+                    pastBody.appendChild(row);
+                });
+            }
+        }
+
+        async function handleContestRegistration(contestId) {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                alert('Please sign in first to participate in contests.');
+                window.location.href = '/signin';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/contests/join/${contestId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId })
+                });
+
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    window.location.href = `/contestpage/${contestId}`;
+                } else {
+                    alert(result.message || 'Error registering for contest');
+                }
+            } catch (err) {
+                console.error('Registration failed:', err);
+                alert('Failed to register. Please try again.');
+            }
+        }
+
+        async function viewLeaderboard(contestId) {
+            try {
+                const res = await fetch(`/api/contests/${contestId}`);
+                if (!res.ok) throw new Error('Error fetching contest');
+                const contest = await res.json();
+
+                if (contest.status === 'Completed') {
+                    window.location.href = `/contest/${contestId}/leaderboard`;
+                } else {
+                    document.getElementById('leaderboard-modal').style.display = 'flex';
+                }
+            } catch (err) {
+                window.location.href = `/contest/${contestId}/leaderboard`;
+            }
+        }
+
+        document.getElementById('close-modal-btn').addEventListener('click', () => {
+            document.getElementById('leaderboard-modal').style.display = 'none';
+        });
+
+        // Join contest by code handler
+        document.getElementById('join-contest-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const contestCode = document.getElementById('contest-code').value.trim();
+            const userId = localStorage.getItem('userId');
+
+            if (!contestCode) return;
+
+            try {
+                const res = await fetch('/api/contests/join-by-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contestCode, userId })
+                });
+
+                const data = await res.json();
+                if (res.ok && data.contestId) {
+                    window.location.href = `/contestpage/${data.contestId}`;
+                } else {
+                    alert(data.msg || 'Contest not found with code: ' + contestCode);
+                }
+            } catch (err) {
+                console.error('Join contest error:', err);
+                alert('Could not join contest. Please check the code.');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', fetchContests);
+    </script>
+</body>
+</html>

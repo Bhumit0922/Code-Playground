@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: code-playground-app
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongo:27017/codeplayground
+      - JWT_SECRET=production_super_secret_jwt_key
+      - EXECUTION_MODE=cloud
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:6-jammy
+    container_name: code-playground-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

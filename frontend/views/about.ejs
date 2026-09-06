@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head', { pageTitle: 'About Us' }) %>
+  <style>
+    .about-hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #ffffff;
+      padding: 5rem 1.5rem 4rem;
+      text-align: center;
+      position: relative;
+    }
+    .about-hero h1 {
+      font-size: 2.75rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      background: linear-gradient(90deg, #60a5fa, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .about-hero p {
+      font-size: 1.2rem;
+      color: #cbd5e1;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+    .about-content {
+      max-width: 1100px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin: 3rem 0;
+    }
+    .feature-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary);
+    }
+    .feature-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .feature-card h3 {
+      font-size: 1.25rem;
+      color: var(--dark);
+      margin-bottom: 0.75rem;
+    }
+    .feature-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .tech-stack-section {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      border: 1px solid var(--border-color);
+      margin: 3rem 0;
+      text-align: center;
+    }
+    .tech-badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .tech-pill {
+      background: var(--light-bg);
+      border: 1px solid var(--border-color);
+      padding: 0.6rem 1.25rem;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--dark);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .cta-banner {
+      background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+      color: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 3rem 2rem;
+      text-align: center;
+      margin: 3rem 0;
+    }
+    .cta-banner h2 {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+    .cta-banner p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 1.5rem;
+    }
+    .btn-cta {
+      background: #ffffff;
+      color: var(--primary);
+      padding: 0.8rem 2rem;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+      transition: var(--transition);
+    }
+    .btn-cta:hover {
+      background: #f8fafc;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    @media (max-width: 768px) {
+      .about-hero h1 { font-size: 2.2rem; }
+      .tech-stack-section { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <%- include('partials/navbar', { activePage: 'about' }) %>
+
+  <main>
+    <section class="about-hero">
+      <h1>About Code Playground</h1>
+      <p>Building the next generation of competitive programming, coding interview preparation, and collaborative learning.</p>
+    </section>
+
+    <div class="about-content">
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-terminal"></i></div>
+          <h3>In-Browser Code Execution</h3>
+          <p>Powered by the Monaco Editor (the engine behind VS Code) and a robust cloud execution sandbox supporting Python, C++, Java, and C with instant feedback.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-trophy"></i></div>
+          <h3>Real-Time Contests & Ratings</h3>
+          <p>Compete against peers in timed challenges with live score updates, dynamic leaderboard recalculation, and automated rating progressions.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-database"></i></div>
+          <h3>Rich Problem Bank</h3>
+          <p>Diverse curated problems spanning Data Structures, Algorithms, Dynamic Programming, Graphs, and Math with comprehensive test case verification.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-users"></i></div>
+          <h3>Community Discussions</h3>
+          <p>Ask questions, share multiple approaches, vote on constructive answers, and learn from a supportive community of aspiring engineers.</p>
+        </div>
+      </div>
+
+      <div class="tech-stack-section">
+        <h2>Built with Modern Technologies</h2>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">Optimized for performance, security, responsiveness, and rapid serverless deployment.</p>
+        <div class="tech-badges">
+          <span class="tech-pill"><i class="fab fa-node-js" style="color: #68a063;"></i> Node.js & Express</span>
+          <span class="tech-pill"><i class="fas fa-database" style="color: #47a248;"></i> MongoDB & Mongoose</span>
+          <span class="tech-pill"><i class="fas fa-code" style="color: #007acc;"></i> Monaco Editor</span>
+          <span class="tech-pill"><i class="fas fa-box" style="color: #e34c26;"></i> Piston Sandboxed Execution</span>
+          <span class="tech-pill"><i class="fas fa-key" style="color: #f59e0b;"></i> JWT & BCrypt Security</span>
+          <span class="tech-pill"><i class="fas fa-mobile-alt" style="color: #2563eb;"></i> Responsive EJS + Modern CSS</span>
+        </div>
+      </div>
+
+      <div class="cta-banner">
+        <h2>Ready to Level Up Your Coding?</h2>
+        <p>Join Code Playground today to start solving problems and competing in upcoming contests.</p>
+        <a href="/problems" class="btn-cta">Start Solving Problems</a>
+      </div>
+    </div>
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

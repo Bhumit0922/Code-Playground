@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { pageTitle: 'Problem Bank' }) %>
+    <link rel="stylesheet" href="/css/problems.css">
+    <style>
+        .filter-container {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 2rem auto 1.5rem;
+            max-width: 1200px;
+            padding: 0 1rem;
+        }
+        .filter-container input, .filter-container select {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: #ffffff;
+            font-size: 0.95rem;
+            font-family: inherit;
+            outline: none;
+            transition: var(--transition);
+        }
+        .filter-container input:focus, .filter-container select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+        #search-bar {
+            flex: 2;
+            min-width: 240px;
+        }
+        .filter-container select {
+            flex: 1;
+            min-width: 160px;
+            cursor: pointer;
+        }
+        .problems-container {
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+            padding: 0 1rem;
+        }
+        .problems-table-card {
+            background: #ffffff;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        th {
+            background: #f8fafc;
+            padding: 1rem 1.25rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: 1.1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+        tbody tr {
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        tbody tr:hover {
+            background: #f1f5f9;
+        }
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .problem-title-cell {
+            font-weight: 500;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .problem-title-cell:hover {
+            color: var(--primary);
+        }
+        .topic-pill {
+            font-size: 0.75rem;
+            background: var(--light-bg);
+            border: 1px solid var(--border-color);
+            padding: 0.2rem 0.6rem;
+            border-radius: var(--radius-full);
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <%- include('partials/navbar', { activePage: 'problems' }) %>
+
+    <main>
+        <!-- Problem Filters -->
+        <div class="filter-container">
+            <input type="text" id="search-bar" placeholder="Search problems by title, topic..." aria-label="Search problems">
+            
+            <select id="difficulty" aria-label="Filter by difficulty">
+                <option value="all">All Difficulties</option>
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+            </select>
+
+            <select id="sort" aria-label="Sort problems">
+                <option value="newest">Newest First</option>
+                <option value="most-solved">Most Solved</option>
+                <option value="difficulty">Difficulty</option>
+            </select>
+        </div>
+
+        <!-- Problems Table -->
+        <div class="problems-container">
+            <div class="problems-table-card">
+                <div class="table-responsive">
+                    <table aria-label="Coding problems table">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="width: 55%;">Title</th>
+                                <th scope="col" style="width: 25%;">Difficulty</th>
+                                <th scope="col" style="width: 20%;">Acceptance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="problems-list">
+                            <tr>
+                                <td colspan="3" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+                                    <i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i> Loading problem set...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <%- include('partials/footer') %>
+
+    <script>
+        function openProblem(problemId) {
+            window.location.href = `/editcode/${problemId}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchBar = document.getElementById('search-bar');
+            const difficultySelect = document.getElementById('difficulty');
+            const sortSelect = document.getElementById('sort');
+            const problemsList = document.getElementById('problems-list');
+
+            let allProblems = [];
+
+            async function fetchProblems() {
+                try {
+                    const diff = difficultySelect.value;
+                    const sort = sortSelect.value;
+                    const queryParams = new URLSearchParams();
+
+                    if (diff && diff !== 'all') queryParams.append('difficulty', diff);
+                    if (sort) queryParams.append('sort', sort);
+
+                    const res = await fetch(`/api/problems?${queryParams.toString()}`);
+                    if (!res.ok) throw new Error('Failed to fetch problems');
+                    
+                    allProblems = await res.json();
+                    renderProblems();
+                } catch (err) {
+                    console.error('Fetch problems error:', err);
+                    problemsList.innerHTML = `
+                        <tr>
+                            <td colspan="3" style="text-align: center; color: #ef4444; padding: 2rem;">
+                                <i class="fas fa-exclamation-circle" style="margin-right: 0.5rem;"></i> Error loading problems. Please try again.
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+
+            function renderProblems() {
+                const search = (searchBar.value || '').trim().toLowerCase();
+                const filtered = search
+                    ? allProblems.filter(p => 
+                        p.title.toLowerCase().includes(search) || 
+                        (p.topic && p.topic.toLowerCase().includes(search)) ||
+                        (p.tags && p.tags.some(t => t.toLowerCase().includes(search)))
+                      )
+                    : allProblems;
+
+                if (!filtered || filtered.length === 0) {
+                    problemsList.innerHTML = `
+                        <tr>
+                            <td colspan="3" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                                No problems found matching your criteria.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                problemsList.innerHTML = filtered.map(p => {
+                    const diffLower = (p.difficulty || 'medium').toLowerCase();
+                    const acceptance = p.acceptance || '75%';
+                    const topicBadge = p.topic ? `<span class="topic-pill">${p.topic}</span>` : '';
+
+                    return `
+                        <tr onclick="openProblem('${p._id}')" tabindex="0" role="button" aria-label="Open ${p.title}">
+                            <td>
+                                <div class="problem-title-cell">
+                                    <span>${p.title}</span>
+                                    ${topicBadge}
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge badge-${diffLower}">${p.difficulty}</span>
+                            </td>
+                            <td style="color: var(--text-muted); font-weight: 500;">
+                                ${acceptance}
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            let debounceTimer;
+            searchBar.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(renderProblems, 250);
+            });
+
+            difficultySelect.addEventListener('change', fetchProblems);
+            sortSelect.addEventListener('change', fetchProblems);
+
+            fetchProblems();
+        });
+    </script>
+</body>
+</html>

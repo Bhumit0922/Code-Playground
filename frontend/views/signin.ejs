@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { pageTitle: 'Sign In' }) %>
+    <style>
+        .auth-page {
+            min-height: calc(100vh - var(--nav-height) - 100px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem 1rem;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            position: relative;
+        }
+        .auth-card {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            max-width: 440px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            color: #ffffff;
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .auth-logo {
+            height: 48px;
+            margin-bottom: 1rem;
+        }
+        .auth-input-group {
+            margin-bottom: 1.25rem;
+        }
+        .auth-input-group label {
+            display: block;
+            font-size: 0.88rem;
+            color: #cbd5e1;
+            margin-bottom: 0.4rem;
+            font-weight: 500;
+        }
+        .auth-input-group input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-sm);
+            color: #ffffff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition);
+        }
+        .auth-input-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+        .auth-btn {
+            width: 100%;
+            padding: 0.85rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+        .auth-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        .auth-footer a {
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .auth-alert {
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            margin-bottom: 1.25rem;
+            display: none;
+        }
+        .auth-alert.error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <%- include('partials/navbar', { activePage: 'signin' }) %>
+
+    <main class="auth-page">
+        <div class="auth-card">
+            <div class="auth-header">
+                <img src="/lo.png" alt="Code Playground" class="auth-logo">
+                <h1 style="font-size: 1.6rem; margin-bottom: 0.3rem;">Welcome Back</h1>
+                <p style="color: #94a3b8; font-size: 0.9rem;">Sign in to continue your coding journey</p>
+            </div>
+
+            <div id="auth-alert" class="auth-alert error"></div>
+
+            <form id="signin-form">
+                <div class="auth-input-group">
+                    <label for="email">Email or Username</label>
+                    <input type="text" id="email" required placeholder="name@example.com" autocomplete="username">
+                </div>
+
+                <div class="auth-input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="••••••••" autocomplete="current-password">
+                </div>
+
+                <button type="submit" class="auth-btn" id="submit-btn">
+                    Sign In &rarr;
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Don't have an account? <a href="/signup">Create one now</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <%- include('partials/footer') %>
+
+    <script>
+        const form = document.getElementById('signin-form');
+        const alertBox = document.getElementById('auth-alert');
+        const submitBtn = document.getElementById('submit-btn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            alertBox.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Signing in...';
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            try {
+                const res = await fetch('/signin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    // Persist session tokens and user profile
+                    localStorage.setItem('userId', data.userId);
+                    localStorage.setItem('userEmail', data.email);
+                    localStorage.setItem('username', data.username);
+                    if (data.role) localStorage.setItem('role', data.role);
+                    if (data.token) localStorage.setItem('token', data.token);
+                    if (data.profilePicture) localStorage.setItem('profilePicture', data.profilePicture);
+
+                    window.location.href = '/explore';
+                } else {
+                    alertBox.textContent = data.message || 'Invalid credentials. Please try again.';
+                    alertBox.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Sign In →';
+                }
+            } catch (err) {
+                alertBox.textContent = 'Unable to connect to server. Please try again.';
+                alertBox.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign In →';
+            }
+        });
+    </script>
+</body>
+</html>

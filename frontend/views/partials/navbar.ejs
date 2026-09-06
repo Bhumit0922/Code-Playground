@@ -1,0 +1,176 @@
+<nav class="cp-navbar">
+  <div class="cp-nav-container">
+    <!-- Brand Logo -->
+    <a href="/explore" class="cp-nav-brand" title="Code Playground Home">
+      <img src="/lo.png" alt="Code Playground" class="cp-nav-logo">
+    </a>
+
+    <!-- Desktop Nav Links -->
+    <ul class="cp-nav-links">
+      <li><a href="/explore" class="cp-nav-link <%= typeof activePage !== 'undefined' && activePage === 'explore' ? 'active' : '' %>"><i class="fas fa-compass"></i> Explore</a></li>
+      <li><a href="/problems" class="cp-nav-link <%= typeof activePage !== 'undefined' && activePage === 'problems' ? 'active' : '' %>"><i class="fas fa-code"></i> Problems</a></li>
+      <li><a href="/contests" class="cp-nav-link <%= typeof activePage !== 'undefined' && activePage === 'contests' ? 'active' : '' %>"><i class="fas fa-trophy"></i> Contests</a></li>
+      <li><a href="/discuss" class="cp-nav-link <%= typeof activePage !== 'undefined' && activePage === 'discuss' ? 'active' : '' %>"><i class="fas fa-comments"></i> Discuss</a></li>
+      <li><a href="/about" class="cp-nav-link <%= typeof activePage !== 'undefined' && activePage === 'about' ? 'active' : '' %>"><i class="fas fa-info-circle"></i> About</a></li>
+      <li><a href="/contact" class="cp-nav-link <%= typeof activePage !== 'undefined' && activePage === 'contact' ? 'active' : '' %>"><i class="fas fa-envelope"></i> Contact</a></li>
+    </ul>
+
+    <!-- Desktop Auth Section -->
+    <div class="cp-nav-auth" id="cp-desktop-auth">
+      <!-- Injected by JavaScript based on login state -->
+      <a href="/signin" class="cp-btn-nav-login">Sign In</a>
+      <a href="/signup" class="cp-btn-nav-signup">Get Started</a>
+    </div>
+
+    <!-- Mobile Hamburger Toggle -->
+    <button class="cp-mobile-toggle" id="cp-mobile-toggle-btn" aria-label="Toggle Navigation Menu">
+      <i class="fas fa-bars"></i>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Drawer Overlay -->
+<div class="cp-drawer-overlay" id="cp-drawer-overlay"></div>
+
+<!-- Mobile Drawer Menu -->
+<aside class="cp-mobile-drawer" id="cp-mobile-drawer">
+  <div class="cp-drawer-header">
+    <a href="/explore" class="cp-nav-brand">
+      <img src="/lo.png" alt="Code Playground" class="cp-nav-logo">
+    </a>
+    <button class="cp-drawer-close" id="cp-drawer-close-btn" aria-label="Close menu">&times;</button>
+  </div>
+
+  <ul class="cp-drawer-links">
+    <li><a href="/explore" class="cp-drawer-link <%= typeof activePage !== 'undefined' && activePage === 'explore' ? 'active' : '' %>"><i class="fas fa-compass"></i> Explore</a></li>
+    <li><a href="/problems" class="cp-drawer-link <%= typeof activePage !== 'undefined' && activePage === 'problems' ? 'active' : '' %>"><i class="fas fa-code"></i> Problems</a></li>
+    <li><a href="/contests" class="cp-drawer-link <%= typeof activePage !== 'undefined' && activePage === 'contests' ? 'active' : '' %>"><i class="fas fa-trophy"></i> Contests</a></li>
+    <li><a href="/discuss" class="cp-drawer-link <%= typeof activePage !== 'undefined' && activePage === 'discuss' ? 'active' : '' %>"><i class="fas fa-comments"></i> Discuss</a></li>
+    <li><a href="/about" class="cp-drawer-link <%= typeof activePage !== 'undefined' && activePage === 'about' ? 'active' : '' %>"><i class="fas fa-info-circle"></i> About Us</a></li>
+    <li><a href="/contact" class="cp-drawer-link <%= typeof activePage !== 'undefined' && activePage === 'contact' ? 'active' : '' %>"><i class="fas fa-envelope"></i> Contact</a></li>
+  </ul>
+
+  <!-- Mobile Drawer Auth -->
+  <div class="cp-drawer-auth" id="cp-mobile-auth">
+    <a href="/signin" class="cp-btn-nav-login" style="text-align:center;">Sign In</a>
+    <a href="/signup" class="cp-btn-nav-signup" style="text-align:center;">Get Started</a>
+  </div>
+</aside>
+
+<script>
+(function() {
+  // Mobile drawer controls
+  const toggleBtn = document.getElementById('cp-mobile-toggle-btn');
+  const closeBtn = document.getElementById('cp-drawer-close-btn');
+  const drawer = document.getElementById('cp-mobile-drawer');
+  const overlay = document.getElementById('cp-drawer-overlay');
+
+  function openDrawer() {
+    if (drawer && overlay) {
+      drawer.classList.add('active');
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeDrawer() {
+    if (drawer && overlay) {
+      drawer.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+
+  if (toggleBtn) toggleBtn.addEventListener('click', openDrawer);
+  if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+  if (overlay) overlay.addEventListener('click', closeDrawer);
+
+  // Authentication State Sync
+  function syncAuthState() {
+    const userId = localStorage.getItem('userId');
+    const username = localStorage.getItem('username') || localStorage.getItem('userEmail') || 'User';
+    const desktopAuth = document.getElementById('cp-desktop-auth');
+    const mobileAuth = document.getElementById('cp-mobile-auth');
+
+    if (userId) {
+      // Logged in UI
+      const userPic = localStorage.getItem('profilePicture') || '/profile.png';
+      
+      if (desktopAuth) {
+        desktopAuth.innerHTML = `
+          <div class="cp-user-pill" id="cp-user-menu-btn" tabindex="0">
+            <img src="${userPic}" alt="${username}" class="cp-user-avatar" onerror="this.src='/profile.png'">
+            <span class="cp-user-name">${username.split('@')[0]}</span>
+            <i class="fas fa-chevron-down" style="font-size:0.75rem; color:#94a3b8;"></i>
+            
+            <div class="cp-user-dropdown" id="cp-user-dropdown">
+              <a href="/profile"><i class="fas fa-user-circle"></i> My Profile</a>
+              <a href="/create_contest"><i class="fas fa-plus-circle"></i> Create Contest</a>
+              <button type="button" class="logout-item" id="cp-logout-btn"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+            </div>
+          </div>
+        `;
+      }
+
+      if (mobileAuth) {
+        mobileAuth.innerHTML = `
+          <a href="/profile" class="cp-drawer-link"><i class="fas fa-user-circle"></i> Profile (${username.split('@')[0]})</a>
+          <a href="/create_contest" class="cp-drawer-link"><i class="fas fa-plus-circle"></i> Create Contest</a>
+          <button type="button" class="cp-drawer-link" id="cp-mobile-logout-btn" style="background:transparent; border:none; color:#f87171; cursor:pointer; width:100%;"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+        `;
+      }
+
+      // Attach dropdown & logout events
+      setTimeout(() => {
+        const pill = document.getElementById('cp-user-menu-btn');
+        const dropdown = document.getElementById('cp-user-dropdown');
+        if (pill && dropdown) {
+          pill.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('show');
+          });
+          document.addEventListener('click', () => {
+            dropdown.classList.remove('show');
+          });
+        }
+
+        const handleLogout = () => {
+          localStorage.removeItem('userId');
+          localStorage.removeItem('username');
+          localStorage.removeItem('userEmail');
+          localStorage.removeItem('token');
+          localStorage.removeItem('profilePicture');
+          window.location.href = '/signin';
+        };
+
+        const logoutBtn = document.getElementById('cp-logout-btn');
+        const mobileLogoutBtn = document.getElementById('cp-mobile-logout-btn');
+        if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+        if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', handleLogout);
+      }, 50);
+
+    } else {
+      // Guest state
+      if (desktopAuth) {
+        desktopAuth.innerHTML = `
+          <a href="/signin" class="cp-btn-nav-login">Sign In</a>
+          <a href="/signup" class="cp-btn-nav-signup">Get Started</a>
+        `;
+      }
+      if (mobileAuth) {
+        mobileAuth.innerHTML = `
+          <a href="/signin" class="cp-btn-nav-login" style="text-align:center;">Sign In</a>
+          <a href="/signup" class="cp-btn-nav-signup" style="text-align:center;">Get Started</a>
+        `;
+      }
+    }
+  }
+
+  // Run on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncAuthState);
+  } else {
+    syncAuthState();
+  }
+})();
+</script>
