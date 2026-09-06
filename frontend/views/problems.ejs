@@ -162,7 +162,7 @@
 
             let allProblems = [];
 
-            async function fetchProblems() {
+            async function fetchProblems(retryCount = 0) {
                 try {
                     const diff = difficultySelect.value;
                     const sort = sortSelect.value;
@@ -178,15 +178,25 @@
                     renderProblems();
                 } catch (err) {
                     console.error('Fetch problems error:', err);
+                    if (retryCount < 2) {
+                        setTimeout(() => fetchProblems(retryCount + 1), 1200);
+                        return;
+                    }
                     problemsList.innerHTML = `
                         <tr>
-                            <td colspan="3" style="text-align: center; color: #ef4444; padding: 2rem;">
-                                <i class="fas fa-exclamation-circle" style="margin-right: 0.5rem;"></i> Error loading problems. Please try again.
+                            <td colspan="3" style="text-align: center; color: #ef4444; padding: 2.5rem;">
+                                <div style="margin-bottom: 0.6rem;"><i class="fas fa-triangle-exclamation" style="font-size: 1.5rem;"></i></div>
+                                <div style="font-size: 0.95rem; font-weight: 500;">Unable to connect to problem database</div>
+                                <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0.3rem 0 1rem;">Serverless connection timed out during a cold start.</p>
+                                <button onclick="window.fetchProblems(0)" style="background: var(--primary); color: white; border: none; padding: 0.5rem 1.25rem; border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 0.4rem;">
+                                    <i class="fas fa-rotate-right"></i> Retry Connection
+                                </button>
                             </td>
                         </tr>
                     `;
                 }
             }
+            window.fetchProblems = fetchProblems;
 
             function renderProblems() {
                 const search = (searchBar.value || '').trim().toLowerCase();

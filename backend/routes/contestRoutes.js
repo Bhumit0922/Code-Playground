@@ -24,16 +24,13 @@ router.get('/', async (req, res) => {
             })
             .sort({ startTime: -1 });
 
-        // Update contest statuses in real-time
-        const updatedContests = [];
-        for (const contest of contests) {
-            await contest.updateStatus();
-            updatedContests.push(contest);
-        }
+        // Update contest statuses in real-time in parallel
+        await Promise.all(contests.map(c => c.updateStatus()));
 
-        const currentContests = updatedContests.filter(c => c.status !== 'Completed');
-        const pastContests = updatedContests.filter(c => c.status === 'Completed');
+        const currentContests = contests.filter(c => c.status !== 'Completed');
+        const pastContests = contests.filter(c => c.status === 'Completed');
 
+        res.set("Cache-Control", "public, s-maxage=20, stale-while-revalidate=40");
         res.json({
             currentContests: currentContests.map(c => ({
                 _id: c._id,

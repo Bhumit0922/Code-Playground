@@ -241,8 +241,8 @@
     <%- include('partials/footer') %>
 
     <script>
-        // Fetch contests from relative API route (fixing previous hardcoded localhost bug)
-        async function fetchContests() {
+        // Fetch contests from relative API route with automatic cold-start retry
+        async function fetchContests(retryCount = 0) {
             try {
                 const response = await fetch('/api/contests');
                 if (!response.ok) throw new Error('Failed to fetch contests');
@@ -251,8 +251,12 @@
                 renderContests(data.currentContests || [], data.pastContests || []);
             } catch (error) {
                 console.error('Failed to fetch contests:', error);
-                document.getElementById('upcoming-contests-body').innerHTML = `<tr><td colspan="7" style="text-align:center; color:#ef4444; padding:2rem;">Failed to load contests. Please try again later.</td></tr>`;
-                document.getElementById('past-contests-body').innerHTML = `<tr><td colspan="7" style="text-align:center; color:#ef4444; padding:2rem;">Failed to load contests. Please try again later.</td></tr>`;
+                if (retryCount < 2) {
+                    setTimeout(() => fetchContests(retryCount + 1), 1200);
+                    return;
+                }
+                document.getElementById('upcoming-contests-body').innerHTML = `<tr><td colspan="7" style="text-align:center; color:#ef4444; padding:2rem;">Failed to load contests. <button onclick="fetchContests(0)" style="margin-left: 0.5rem; background:var(--primary); color:white; border:none; padding: 0.3rem 0.8rem; border-radius:4px; cursor: pointer;"><i class="fas fa-rotate-right"></i> Retry</button></td></tr>`;
+                document.getElementById('past-contests-body').innerHTML = `<tr><td colspan="7" style="text-align:center; color:#ef4444; padding:2rem;">Failed to load contests.</td></tr>`;
             }
         }
 

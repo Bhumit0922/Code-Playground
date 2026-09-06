@@ -123,6 +123,7 @@ router.get("/", async (req, res) => {
         }
         
         const problems = await queryBuilder.lean({ virtuals: true });
+        res.set("Cache-Control", "public, s-maxage=30, stale-while-revalidate=60");
         res.json(problems);
     } catch (error) {
         console.error("Error fetching problems:", error);
@@ -141,6 +142,7 @@ router.get("/:id", async (req, res) => {
         if (!problem) {
             return res.status(404).json({ message: "Problem not found" });
         }
+        res.set("Cache-Control", "public, s-maxage=30, stale-while-revalidate=60");
         res.json(problem);
     } catch (error) {
         console.error("Error fetching problem:", error);

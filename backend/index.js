@@ -35,6 +35,21 @@ app.use(cors());
 app.use(express.json({ limit: "15mb" }));
 app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 
+// Serverless Database Connection Middleware: Ensure MongoDB is connected before handling data requests
+app.use(async (req, res, next) => {
+    // Skip db connection for static assets
+    if (req.path.startsWith('/css') || req.path.startsWith('/uploads') || req.path.match(/\.(png|jpg|jpeg|gif|svg|ico|css|js|woff|woff2|ttf)$/i)) {
+        return next();
+    }
+    try {
+        await connectDB();
+        next();
+    } catch (err) {
+        console.error("[Database Middleware Connection Error]:", err.message);
+        next();
+    }
+});
+
 // Static files configuration (for local and container environments)
 if (publicDir) {
     app.use("/css", express.static(path.join(publicDir, "css")));
