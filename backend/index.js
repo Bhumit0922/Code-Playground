@@ -16,20 +16,34 @@ const app = express();
 // Connect to Database
 connectDB();
 
+// Resolve directories safely for both Local and Vercel serverless runtime
+const fs = require("fs");
+const frontendDir = fs.existsSync(path.join(process.cwd(), "frontend"))
+    ? path.join(process.cwd(), "frontend")
+    : path.join(__dirname, "../frontend");
+
+const publicDir = fs.existsSync(path.join(process.cwd(), "public"))
+    ? path.join(process.cwd(), "public")
+    : null;
+
 // View engine setup
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "../frontend/views"));
+app.set("views", path.join(frontendDir, "views"));
 
 // Body parsing and security middleware
 app.use(cors());
 app.use(express.json({ limit: "15mb" }));
 app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 
-// Static files configuration
-app.use("/css", express.static(path.join(__dirname, "../frontend/css")));
-app.use("/uploads", express.static(path.join(__dirname, "../frontend/imgg/uploads")));
-app.use(express.static(path.join(__dirname, "../frontend/imgg")));
-app.use(express.static(path.join(__dirname, "../frontend")));
+// Static files configuration (for local and container environments)
+if (publicDir) {
+    app.use("/css", express.static(path.join(publicDir, "css")));
+    app.use(express.static(publicDir));
+}
+app.use("/css", express.static(path.join(frontendDir, "css")));
+app.use("/uploads", express.static(path.join(frontendDir, "imgg/uploads")));
+app.use(express.static(path.join(frontendDir, "imgg")));
+app.use(express.static(frontendDir));
 
 // Import API Routes
 const authRoutes = require("./routes/authRoutes");
